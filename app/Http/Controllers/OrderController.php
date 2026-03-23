@@ -12,6 +12,15 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
+    public function index()
+    {
+        $orders = Order::where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('pembeli.history', compact('orders'));
+    }
+
     public function store(Request $request)
     {
         $cart = session()->get('cart');
@@ -20,14 +29,12 @@ class OrderController extends Controller
         }
 
         $total = 0;
-        foreach($cart as $item) { 
-            $total += $item['price'] * $item['quantity']; 
+        foreach ($cart as $item) {
+            $total += $item['price'] * $item['quantity'];
         }
 
-        // Ambil data user yang sedang login sebagai Model User agar bisa pakai decrement
         $user = User::find(Auth::id());
 
-        // Cek apakah saldo cukup
         if ($user->balance < $total) {
             return redirect()->back()->with('error', 'Saldo tidak cukup untuk melakukan pembayaran!');
         }
@@ -37,20 +44,22 @@ class OrderController extends Controller
                 // 1. Kurangi Saldo Pembeli
                 $user->decrement('balance', $total);
 
-                // 2. Buat Data Order Utama
+                // 2. Buat Data Order Utama (Sesuaikan dengan kolom database kamu)
                 $order = Order::create([
                     'user_id' => $user->id,
-                    'total_price' => $total,
-                    'status' => 'pending'
+                    'total_harga' => $total, 
+                    'status_pembayaran' => 'paid',
+                    'kode_ambil' => strtoupper(\Illuminate\Support\Str::random(6)) 
                 ]);
 
                 // 3. Masukkan Detail & Kurangi Stok Menu
                 foreach ($cart as $id => $details) {
                     OrderDetail::create([
                         'order_id' => $order->id,
-                        'menu_id' => $id,
+                        'menu_id'  => $id,
+                        'shop_id'  => $details['shop_id'] ?? 1,
                         'quantity' => $details['quantity'],
-                        'price' => $details['price']
+                        'subtotal' => $details['price'] * $details['quantity'] // Di database kamu 'subtotal'
                     ]);
 
                     // Mengurangi stok menu
@@ -61,10 +70,11 @@ class OrderController extends Controller
                 session()->forget('cart');
             });
 
-            return redirect()->route('pembeli.dashboard')->with('success', 'Pesanan berhasil dibuat! Silakan ambil di kantin.');
-
+            // Pastikan route ini ada di web.php kamu
+            return redirect()->route('pembeli.dashboard')->with('success', 'Pembayaran Berhasil! Silakan cek riwayat pesanan.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            // Jika ada kolom yang salah, errornya akan muncul di pop-up merah
+            return redirect()->back()->with('error', 'Gagal memproses pesanan: ' . $e->getMessage());
         }
     }
 }

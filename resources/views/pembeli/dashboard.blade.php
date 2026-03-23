@@ -97,16 +97,28 @@
             </div>
         </div>
     </div>
-    @if(session('success'))
-<script>
-    Swal.fire({
-        icon: 'success',
-        title: 'Berhasil!',
-        text: "{{ session('success') }}",
-        background: '#1e1e1e',
-        color: '#fff',
-        confirmButtonColor: '#ea580c'
-    });
-</script>
-@endif
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Waduh...',
+                text: "{{ session('error') }}",
+                background: '#1e1e1e',
+                color: '#fff',
+                confirmButtonColor: '#ea580c'
+            });
+        </script>
+    @endif
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: "{{ session('success') }}",
+                background: '#1e1e1e',
+                color: '#fff',
+                confirmButtonColor: '#ea580c'
+            });
+        </script>
+    @endif
 </x-app-layout>

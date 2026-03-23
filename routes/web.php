@@ -47,6 +47,8 @@ Route::middleware(['auth', 'role:pembeli'])->group(function () {
     Route::delete('/remove-from-cart', [CartController::class, 'remove'])->name('cart.remove');
 
     Route::post('/checkout', [OrderController::class, 'store'])->name('checkout.store');
+
+    Route::get('/history', [OrderController::class, 'index'])->name('pembeli.history');
 });
 
 require __DIR__ . '/auth.php';

@@ -30,7 +30,8 @@ class CartController extends Controller
                 "quantity" => 1,
                 "price" => $menu->harga,
                 "photo" => $menu->foto_menu,
-                "shop" => $menu->shop->nama_warung
+                "shop" => $menu->shop->nama_warung,
+                "shop_id" => $menu->shop->id 
             ];
         }
 

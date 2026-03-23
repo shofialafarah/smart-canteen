@@ -79,38 +79,6 @@
                             Bayar Sekarang
                         </button>
                     </form>
-                    <script>
-                        function confirmPayment() {
-                            Swal.fire({
-                                title: 'Konfirmasi Pembayaran',
-                                text: "Saldo kamu akan terpotong untuk pesanan ini.",
-                                icon: 'question',
-                                showCancelButton: true,
-                                confirmButtonColor: '#ea580c',
-                                cancelButtonColor: '#303030',
-                                confirmButtonText: 'Ya, Bayar!',
-                                cancelButtonText: 'Batal',
-                                background: '#1e1e1e',
-                                color: '#fff'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    document.getElementById('checkout-form').submit();
-                                }
-                            });
-                        }
-                    </script>
-                    @if (session('error'))
-                        <script>
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Waduh...',
-                                text: "{{ session('error') }}",
-                                background: '#1e1e1e',
-                                color: '#fff',
-                                confirmButtonColor: '#ea580c'
-                            });
-                        </script>
-                    @endif
                 </div>
             </div>
 
@@ -123,6 +91,26 @@
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function confirmPayment() {
+            Swal.fire({
+                title: 'Konfirmasi Pembayaran',
+                text: "Saldo kamu akan terpotong untuk pesanan ini.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#ea580c',
+                cancelButtonColor: '#303030',
+                confirmButtonText: 'Ya, Bayar!',
+                cancelButtonText: 'Batal',
+                background: '#1e1e1e',
+                color: '#fff'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('checkout-form').submit();
+                }
+            });
+        }
+    </script>
     <script type="text/javascript">
         function updateCart(id, qty) {
             if (qty < 1) return;
@@ -193,4 +181,23 @@
             });
         }
     </script>
+    @if (session('error'))
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: "{{ session('error') }}"
+    });
+</script>
+@endif
+
+@if (session('success'))
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: "{{ session('success') }}"
+    });
+</script>
+@endif
 </x-app-layout>
