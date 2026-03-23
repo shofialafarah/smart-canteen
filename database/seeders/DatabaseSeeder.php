@@ -15,11 +15,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Buat kategori default agar ID 1 tersedia
+        \App\Models\Category::create([
+            'nama_kategori' => 'Makanan & Minuman'
+        ]);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            UserSeeder::class,
         ]);
     }
 }

@@ -22,6 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'balance',
     ];
 
     /**
@@ -34,6 +36,10 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function shop()
+    {
+        return $this->hasOne(Shop::class);
+    }
     /**
      * Get the attributes that should be cast.
      *

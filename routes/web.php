@@ -31,7 +31,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 // Halaman Khusus Penjual (Warung)
 Route::middleware(['auth', 'role:penjual'])->group(function () {
     Route::get('/seller/dashboard', [SellerController::class, 'index'])->name('seller.dashboard');
-    Route::get('/seller/menu/create', [MenuController::class, 'create']);
+    Route::get('/seller/menu/create', [MenuController::class, 'create'])->name('menu.create');
+    Route::post('/seller/menu/store', [MenuController::class, 'store'])->name('menu.store');
 });
 
 // Halaman Khusus Pembeli (Siswa/Guru)
@@ -40,4 +41,4 @@ Route::middleware(['auth', 'role:pembeli'])->group(function () {
     Route::post('/checkout', [OrderController::class, 'store']);
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
