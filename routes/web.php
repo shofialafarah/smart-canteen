@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CanteenController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
@@ -38,7 +39,14 @@ Route::middleware(['auth', 'role:penjual'])->group(function () {
 // Halaman Khusus Pembeli (Siswa/Guru)
 Route::middleware(['auth', 'role:pembeli'])->group(function () {
     Route::get('/canteen', [CanteenController::class, 'index'])->name('pembeli.dashboard');
-    Route::post('/checkout', [OrderController::class, 'store']);
+
+    // Rute Keranjang
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::get('/add-to-cart/{id}', [CartController::class, 'add'])->name('cart.add');
+    Route::patch('/update-cart', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/remove-from-cart', [CartController::class, 'remove'])->name('cart.remove');
+
+    Route::post('/checkout', [OrderController::class, 'store'])->name('checkout.store');
 });
 
 require __DIR__ . '/auth.php';

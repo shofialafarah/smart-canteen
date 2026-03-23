@@ -37,5 +37,14 @@ class UserSeeder extends Seeder
             'nama_warung' => 'Warung Berkah',
             'deskripsi' => 'Menyediakan makanan sehat dan bergizi',
         ]);
+
+        // 4. Buat akun pembeli (siswa/guru)
+        User::create([
+            'name' => 'Siswa Teladan',
+            'email' => 'pembeli@gmail.com',
+            'password' => Hash::make('123123123'),
+            'role' => 'pembeli',
+            'balance' => 50000, // Kasih saldo awal buat jajan Pop Ice
+        ]);
     }
 }
