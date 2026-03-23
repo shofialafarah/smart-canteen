@@ -20,31 +20,6 @@
 
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
-        <nav class="bg-[#121212] border-b border-white/5 py-4">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-                <div class="flex items-center space-x-4">
-                    <a href="{{ route('pembeli.dashboard') }}"
-                        class="text-orange-500 font-black text-xl tracking-tighter">
-                        SMART<span class="text-white">CANTEEN</span>
-                    </a>
-                </div>
-
-                <div class="flex items-center space-x-6">
-                    <a href="{{ route('pembeli.dashboard') }}"
-                        class="text-gray-400 hover:text-white transition text-sm font-medium">Menu</a>
-                    <a href="{{ route('pembeli.history') }}"
-                        class="text-gray-400 hover:text-white transition text-sm font-medium">Riwayat</a>
-
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit"
-                            class="text-red-500/70 hover:text-red-500 transition text-sm font-medium">
-                            Keluar
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </nav>
 
         <!-- Page Heading -->
         @isset($header)
@@ -60,6 +35,7 @@
             {{ $slot }}
         </main>
     </div>
+    @include('layouts.partials.bottom-nav')
 </body>
 
 </html>
