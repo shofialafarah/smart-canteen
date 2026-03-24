@@ -47,9 +47,9 @@ class OrderController extends Controller
                 // 2. Buat Data Order Utama (Sesuaikan dengan kolom database kamu)
                 $order = Order::create([
                     'user_id' => $user->id,
-                    'total_harga' => $total, 
+                    'total_harga' => $total,
                     'status_pembayaran' => 'paid',
-                    'kode_ambil' => strtoupper(\Illuminate\Support\Str::random(6)) 
+                    'kode_ambil' => strtoupper(\Illuminate\Support\Str::random(6))
                 ]);
 
                 // 3. Masukkan Detail & Kurangi Stok Menu
@@ -76,5 +76,26 @@ class OrderController extends Controller
             // Jika ada kolom yang salah, errornya akan muncul di pop-up merah
             return redirect()->back()->with('error', 'Gagal memproses pesanan: ' . $e->getMessage());
         }
+    }
+
+    public function sellerOrders()
+    {
+        $shop = Auth::user()->shop;
+
+        // Ambil pesanan yang memiliki item dari warung ini
+        // Kita asumsikan ada relasi di model Order ke OrderItem
+        $orders = \App\Models\Order::whereHas('details', function ($query) use ($shop) {
+            $query->where('shop_id', $shop->id);
+        })->with(['user', 'details.menu'])->latest()->get();
+
+        return view('seller.orders.index', compact('orders'));
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $order = \App\Models\Order::findOrFail($id);
+        $order->update(['status' => $request->status]); // misal: 'diproses', 'selesai'
+
+        return back()->with('success', 'Status pesanan diperbarui!');
     }
 }
