@@ -61,12 +61,16 @@
                                     <td class="px-6 py-4 text-orange-400 font-black">
                                         <span class="text-xs">Rp</span> {{ number_format($menu->harga, 0, ',', '.') }}
                                     </td>
-                                    <td class="px-6 py-4 text-center">
-                                        <span
-                                            class="px-3 py-1 bg-[#121212] border border-orange-500/30 rounded-lg text-white font-bold text-sm">
-                                            {{ $menu->stok }}
-                                        </span>
+
+                                    <td class="px-6 py-4">
+                                        <div class="flex justify-start">
+                                            <span
+                                                class="w-12 text-center py-1 bg-[#121212] border border-orange-500/30 rounded-lg text-white font-bold text-sm shadow-inner">
+                                                {{ $menu->stok }}
+                                            </span>
+                                        </div>
                                     </td>
+
                                     <td class="px-6 py-4 text-center">
                                         <div class="flex justify-center gap-3">
                                             <a href="{{ route('menu.edit', $menu->id) }}"
@@ -79,12 +83,11 @@
                                                 </svg>
                                             </a>
 
-                                            <form action="{{ route('menu.destroy', $menu->id) }}" method="POST"
-                                                onsubmit="return confirm('Yakin ingin menghapus menu ini?')">
+                                            <form action="{{ route('menu.destroy', $menu->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit"
-                                                    class="p-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl hover:bg-red-500 hover:text-white transition shadow-sm">
+                                                <button type="button"
+                                                    class="btn-hapus p-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl hover:bg-red-500 hover:text-white transition shadow-sm">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path
@@ -113,27 +116,27 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         // Konfirmasi Hapus (Gunakan class .btn-hapus di tombol)
-    document.addEventListener('click', function (e) {
-        if (e.target.closest('.btn-hapus')) {
-            e.preventDefault();
-            const form = e.target.closest('form');
-            Swal.fire({
-                title: 'Hapus Menu?',
-                text: "Menu yang dihapus gak bisa dikembalikan lho!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ea580c',
-                cancelButtonColor: '#3f3f46',
-                confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batal',
-                background: '#1e1e1e',
-                color: '#fff',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
-            });
-        }
-    });
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.btn-hapus')) {
+                e.preventDefault();
+                const form = e.target.closest('form');
+                Swal.fire({
+                    title: 'Hapus Menu?',
+                    text: "Menu yang dihapus gak bisa dikembalikan lho!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ea580c',
+                    cancelButtonColor: '#3f3f46',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal',
+                    background: '#1e1e1e',
+                    color: '#fff',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            }
+        });
     </script>
 </x-app-layout>

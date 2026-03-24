@@ -10,6 +10,21 @@ use Illuminate\Support\Facades\Auth;
 
 class SellerController extends Controller
 {
+    public function index()
+{
+    // Ambil data warung milik user
+    $shop = Auth::user()->shop;
+
+    // Jika belum punya warung, arahkan ke halaman buat warung atau dashboard dengan pesan
+    if (!$shop) {
+        return view('seller.dashboard', ['menus' => collect()]);
+    }
+
+    $menus = Menu::where('shop_id', $shop->id)->get();
+    
+    return view('seller.dashboard', compact('menus'));
+}
+
     // 1. Simpan Data Warung (Pertama kali daftar)
     public function storeShop(Request $request)
     {
@@ -32,6 +47,12 @@ class SellerController extends Controller
     // 2. Simpan Menu Jajanan
     public function storeMenu(Request $request)
     {
+        $shop = Auth::user()->shop;
+    
+    if (!$shop) {
+        return back()->with('error', 'Kamu harus mendaftarkan warung dulu sebelum tambah menu!');
+    }
+
         $request->validate([
             'nama_menu' => 'required',
             'harga' => 'required|numeric',
@@ -67,7 +88,7 @@ class SellerController extends Controller
     }
 
     // 2. Proses Update Data
-    public function update(Request $request, $id)
+    public function updateMenu(Request $request, $id)
     {
         $menu = Menu::findOrFail($id);
 
@@ -96,11 +117,11 @@ class SellerController extends Controller
 
         $menu->update($data);
 
-        return redirect()->route('dashboard')->with('success', 'Menu berhasil diperbarui!');
+        return redirect()->route('seller.dashboard')->with('success', 'Menu berhasil diperbarui!');
     }
 
     // 3. Proses Hapus Menu
-    public function destroy($id)
+    public function deleteMenu($id)
     {
         $menu = Menu::findOrFail($id);
 

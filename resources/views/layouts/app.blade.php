@@ -21,6 +21,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body class="font-sans antialiased">
@@ -80,6 +81,44 @@
             });
         }
     });
+</script>
+<script>
+    function confirmLogout() {
+        // Ambil nama user (dipotong biar gak kepanjangan)
+        const fullName = "{{ auth()->user()->name }}";
+        const firstName = fullName.split(' ')[0]; // Ambil kata pertama saja (misal: "Shofia")
+        
+        // Ambil role user
+        const role = "{{ auth()->user()->role }}";
+        
+        // Tentukan pesan berdasarkan role
+        let messageText = "Jangan lupa balik lagi buat jajan ya!"; // Default Pembeli
+        
+        if (role === 'penjual') {
+            messageText = "Pastikan semua pesanan sudah diproses ya!";
+        } else if (role === 'admin') {
+            messageText = "Keluar dari panel kendali sistem?";
+        }
+
+        Swal.fire({
+            title: `Mau keluar, ${firstName}?`, // Pakai template literal
+            text: messageText,
+            icon: 'warning',
+            showCancelButton: true,
+            background: '#1e1e1e', 
+            color: '#ffffff',
+            confirmButtonColor: '#f97316', 
+            cancelButtonColor: '#3f3f46',
+            confirmButtonText: 'Ya, Keluar!',
+            cancelButtonText: 'Batal',
+            reverseButtons: true,
+            borderRadius: '20px'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('logout-form').submit();
+            }
+        })
+    }
 </script>
 </body>
 

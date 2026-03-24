@@ -27,17 +27,26 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/verifikasi-warung', [AdminController::class, 'verifyShop']);
+    
+    Route::get('/admin/users', [AdminController::class, 'manageUsers'])->name('admin.users');
 });
 
 // Halaman Khusus Penjual (Warung)
 Route::middleware(['auth', 'role:penjual'])->group(function () {
     Route::get('/seller/dashboard', [SellerController::class, 'index'])->name('seller.dashboard');
-    Route::get('/seller/menu/create', [MenuController::class, 'create'])->name('menu.create');
-    Route::post('/seller/menu/store', [MenuController::class, 'store'])->name('menu.store');
 
-    Route::get('seller/menu/{id}/edit', [SellerController::class, 'edit'])->name('menu.edit');
-    Route::put('seller/menu/{id}', [SellerController::class, 'update'])->name('menu.update');
-    Route::delete('/menu/{id}', [SellerController::class, 'destroy'])->name('menu.destroy');
+    Route::get('/seller/orders', [OrderController::class, 'sellerOrders'])->name('penjual.orders');
+    Route::patch('/seller/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('penjual.orders.update');
+    // Create & Store
+    Route::get('/seller/menu/create', [MenuController::class, 'create'])->name('menu.create'); 
+    Route::post('/seller/menu/store', [SellerController::class, 'storeMenu'])->name('menu.store');
+
+    // Edit & Update
+    Route::get('/seller/menu/{id}/edit', [SellerController::class, 'edit'])->name('menu.edit');
+    Route::put('/seller/menu/{id}', [SellerController::class, 'updateMenu'])->name('menu.update'); // Nama fungsi disesuaikan
+
+    // Delete
+    Route::delete('/seller/menu/{id}', [SellerController::class, 'deleteMenu'])->name('menu.destroy'); // Nama fungsi disesuaikan
 });
 
 // Halaman Khusus Pembeli (Siswa/Guru)
