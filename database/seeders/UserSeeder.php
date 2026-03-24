@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Buat Akun Admin Sekolah
+        // 1. Admin (Login pakai Email)
         User::create([
             'name' => 'Admin Sekolah',
             'email' => 'shofia.lafarah74@gmail.com',
@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
             'role' => 'admin',
         ]);
 
-        // 2. Buat Akun Penjual
+        // 2. Penjual (Login pakai Email)
         $penjual = User::create([
             'name' => 'Ibu Kantin',
             'email' => 'penjual@gmail.com',
@@ -31,20 +31,30 @@ class UserSeeder extends Seeder
             'role' => 'penjual',
         ]);
 
-        // 3. Buat Tokonya otomatis untuk penjual ini
         Shop::create([
             'user_id' => $penjual->id,
             'nama_warung' => 'Warung Berkah',
             'deskripsi' => 'Menyediakan makanan sehat dan bergizi',
         ]);
 
-        // 4. Buat akun pembeli (siswa/guru)
+        // 3. Siswa (LOGIN PAKAI NISN)
         User::create([
             'name' => 'Siswa Teladan',
-            'email' => 'pembeli@gmail.com',
-            'password' => Hash::make('123123123'),
+            'nisn' => '12345678', // NISN diisi
+            'email' => null,      // Email dikosongkan (Siswa gak perlu email)
+            'password' => Hash::make('12345678'), // Password SAMA dengan NISN
             'role' => 'pembeli',
-            'balance' => 50000, // Kasih saldo awal buat jajan Pop Ice
+            'balance' => 50000,
+        ]);
+
+        // 4. Guru (LOGIN PAKAI EMAIL)
+        User::create([
+            'name' => 'Pak Guru Budi',
+            'nisn' => null,       // Guru gak punya NISN
+            'email' => 'budi@guru.com',
+            'password' => Hash::make('guru123'),
+            'role' => 'pembeli',
+            'balance' => 100000,
         ]);
     }
 }

@@ -28,7 +28,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'email' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -42,7 +42,14 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        // 1. Ambil input dari field 'email' di form
+        $loginValue = $this->input('email');
+
+        // 2. Cek: Kalau ada karakter '@', berarti itu EMAIL. Kalau gak ada, berarti itu NISN.
+        $fieldType = filter_var($loginValue, FILTER_VALIDATE_EMAIL) ? 'email' : 'nisn';
+
+        // 3. Masukkan ke dalam Auth attempt
+        if (! Auth::attempt([$fieldType => $loginValue, 'password' => $this->password], $this->remember)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -81,6 +88,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('email')) . '|' . $this->ip());
     }
 }
