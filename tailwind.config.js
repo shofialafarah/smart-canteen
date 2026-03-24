@@ -12,7 +12,10 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                // Font Gendut (Bricolage)
+                'display': ['"Bricolage Grotesque"', ...defaultTheme.fontFamily.sans],
+                // Font Kurus (Jakarta)
+                'body': ['"Plus Jakarta Sans"', ...defaultTheme.fontFamily.sans],
             },
         },
     },

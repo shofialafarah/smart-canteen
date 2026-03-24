@@ -13,9 +13,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [CanteenController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -34,12 +34,19 @@ Route::middleware(['auth', 'role:penjual'])->group(function () {
     Route::get('/seller/dashboard', [SellerController::class, 'index'])->name('seller.dashboard');
     Route::get('/seller/menu/create', [MenuController::class, 'create'])->name('menu.create');
     Route::post('/seller/menu/store', [MenuController::class, 'store'])->name('menu.store');
+
+    Route::get('seller/menu/{id}/edit', [SellerController::class, 'edit'])->name('menu.edit');
+    Route::put('seller/menu/{id}', [SellerController::class, 'update'])->name('menu.update');
+    Route::delete('/menu/{id}', [SellerController::class, 'destroy'])->name('menu.destroy');
 });
 
 // Halaman Khusus Pembeli (Siswa/Guru)
 Route::middleware(['auth', 'role:pembeli'])->group(function () {
-    Route::get('/canteen', [CanteenController::class, 'index'])->name('pembeli.dashboard');
+// Dashboard utama (Daftar Warung)
+Route::get('/canteen', [CanteenController::class, 'index'])->name('pembeli.dashboard');
 
+// Detail Warung (Daftar Menu dari warung tersebut)
+Route::get('/canteen/shop/{id}', [CanteenController::class, 'showShop'])->name('pembeli.shop.detail');
     // Rute Keranjang
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::get('/add-to-cart/{id}', [CartController::class, 'add'])->name('cart.add');

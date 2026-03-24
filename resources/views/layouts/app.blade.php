@@ -11,6 +11,11 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -36,6 +41,46 @@
         </main>
     </div>
     @include('layouts.partials.bottom-nav')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // Alert untuk Success Message
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'BERHASIL!',
+            text: "{{ session('success') }}",
+            background: '#1e1e1e',
+            color: '#fff',
+            confirmButtonColor: '#ea580c', // Warna orange-600
+            iconColor: '#ea580c'
+        });
+    @endif
+
+    // Konfirmasi Hapus (Gunakan class .btn-hapus di tombol)
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('.btn-hapus')) {
+            e.preventDefault();
+            const form = e.target.closest('form');
+            Swal.fire({
+                title: 'Hapus Menu?',
+                text: "Menu yang dihapus gak bisa dikembalikan lho!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ea580c',
+                cancelButtonColor: '#3f3f46',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                background: '#1e1e1e',
+                color: '#fff',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        }
+    });
+</script>
 </body>
 
 </html>
