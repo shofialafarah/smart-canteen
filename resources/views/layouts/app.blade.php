@@ -37,89 +37,93 @@
         @endisset
 
         <!-- Page Content -->
-        <main>
-            {{ $slot }}
-        </main>
-    </div>
-    @include('layouts.partials.bottom-nav')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <div class="min-h-screen flex flex-col bg-[#121212]">
+            <div class="flex-grow pb-28">
+                {{ $slot }}
+            </div>
 
-<script>
-    // Alert untuk Success Message
-    @if(session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'BERHASIL!',
-            text: "{{ session('success') }}",
-            background: '#1e1e1e',
-            color: '#fff',
-            confirmButtonColor: '#ea580c', // Warna orange-600
-            iconColor: '#ea580c'
-        });
-    @endif
+            <div class="fixed bottom-0 left-0 right-0 z-50">
+                @include('layouts.partials.bottom-nav')
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    // Konfirmasi Hapus (Gunakan class .btn-hapus di tombol)
-    document.addEventListener('click', function (e) {
-        if (e.target.closest('.btn-hapus')) {
-            e.preventDefault();
-            const form = e.target.closest('form');
-            Swal.fire({
-                title: 'Hapus Menu?',
-                text: "Menu yang dihapus gak bisa dikembalikan lho!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ea580c',
-                cancelButtonColor: '#3f3f46',
-                confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batal',
-                background: '#1e1e1e',
-                color: '#fff',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
+        <script>
+            // Alert untuk Success Message
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'BERHASIL!',
+                    text: "{{ session('success') }}",
+                    background: '#1e1e1e',
+                    color: '#fff',
+                    confirmButtonColor: '#ea580c', // Warna orange-600
+                    iconColor: '#ea580c'
+                });
+            @endif
+
+            // Konfirmasi Hapus (Gunakan class .btn-hapus di tombol)
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.btn-hapus')) {
+                    e.preventDefault();
+                    const form = e.target.closest('form');
+                    Swal.fire({
+                        title: 'Hapus Menu?',
+                        text: "Menu yang dihapus gak bisa dikembalikan lho!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ea580c',
+                        cancelButtonColor: '#3f3f46',
+                        confirmButtonText: 'Ya, Hapus!',
+                        cancelButtonText: 'Batal',
+                        background: '#1e1e1e',
+                        color: '#fff',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
                 }
             });
-        }
-    });
-</script>
-<script>
-    function confirmLogout() {
-        // Ambil nama user (dipotong biar gak kepanjangan)
-        const fullName = "{{ auth()->user()->name }}";
-        const firstName = fullName.split(' ')[0]; // Ambil kata pertama saja (misal: "Shofia")
-        
-        // Ambil role user
-        const role = "{{ auth()->user()->role }}";
-        
-        // Tentukan pesan berdasarkan role
-        let messageText = "Jangan lupa balik lagi buat jajan ya!"; // Default Pembeli
-        
-        if (role === 'penjual') {
-            messageText = "Pastikan semua pesanan sudah diproses ya!";
-        } else if (role === 'admin') {
-            messageText = "Keluar dari panel kendali sistem?";
-        }
+        </script>
+        <script>
+            function confirmLogout() {
+                // Ambil nama user (dipotong biar gak kepanjangan)
+                const fullName = "{{ auth()->user()->name }}";
+                const firstName = fullName.split(' ')[0]; // Ambil kata pertama saja (misal: "Shofia")
 
-        Swal.fire({
-            title: `Mau keluar, ${firstName}?`, // Pakai template literal
-            text: messageText,
-            icon: 'warning',
-            showCancelButton: true,
-            background: '#1e1e1e', 
-            color: '#ffffff',
-            confirmButtonColor: '#f97316', 
-            cancelButtonColor: '#3f3f46',
-            confirmButtonText: 'Ya, Keluar!',
-            cancelButtonText: 'Batal',
-            reverseButtons: true,
-            borderRadius: '20px'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('logout-form').submit();
+                // Ambil role user
+                const role = "{{ auth()->user()->role }}";
+
+                // Tentukan pesan berdasarkan role
+                let messageText = "Jangan lupa balik lagi buat jajan ya!"; // Default Pembeli
+
+                if (role === 'penjual') {
+                    messageText = "Pastikan semua pesanan sudah diproses ya!";
+                } else if (role === 'admin') {
+                    messageText = "Keluar dari panel kendali sistem?";
+                }
+
+                Swal.fire({
+                    title: `Mau keluar, ${firstName}?`, // Pakai template literal
+                    text: messageText,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    background: '#1e1e1e',
+                    color: '#ffffff',
+                    confirmButtonColor: '#f97316',
+                    cancelButtonColor: '#3f3f46',
+                    confirmButtonText: 'Ya, Keluar!',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true,
+                    borderRadius: '20px'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('logout-form').submit();
+                    }
+                })
             }
-        })
-    }
-</script>
+        </script>
 </body>
 
 </html>

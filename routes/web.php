@@ -47,6 +47,7 @@ Route::middleware(['auth', 'role:penjual'])->group(function () {
 
     // Delete
     Route::delete('/seller/menu/{id}', [SellerController::class, 'deleteMenu'])->name('menu.destroy'); // Nama fungsi disesuaikan
+    Route::get('/seller/orders/update-by-qr/{kode}', [OrderController::class, 'updateByQR'])->name('seller.orders.qr_update');
 });
 
 // Halaman Khusus Pembeli (Siswa/Guru)

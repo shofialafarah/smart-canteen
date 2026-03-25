@@ -72,11 +72,51 @@
                             {{ number_format($total, 0, ',', '.') }}</span>
                     </div>
 
+                    <div class="mb-8">
+                        <label class="text-gray-400 font-medium text-sm uppercase tracking-widest mb-4 block">
+                            Pilih Metode Pembayaran:
+                        </label>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="metode_pembayaran" value="cash" class="peer hidden"
+                                    onclick="document.getElementById('metode_pembayaran_input').value = 'cash'" checked>
+                                <div
+                                    class="bg-[#2a2a2a] border-2 border-transparent peer-checked:border-orange-500 peer-checked:bg-orange-500/10 p-4 rounded-2xl transition-all flex flex-col items-center gap-2 group-hover:bg-[#333]">
+                                    <svg class="w-6 h-6 text-gray-400 peer-checked:text-orange-500" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
+                                        </path>
+                                    </svg>
+                                    <span class="font-bold text-sm uppercase italic">Bayar Tunai</span>
+                                </div>
+                            </label>
+
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="metode_pembayaran" value="cashless" class="peer hidden"
+                                    onclick="document.getElementById('metode_pembayaran_input').value = 'cashless'">
+                                <div
+                                    class="bg-[#2a2a2a] border-2 border-transparent peer-checked:border-orange-500 peer-checked:bg-orange-500/10 p-4 rounded-2xl transition-all flex flex-col items-center gap-2 group-hover:bg-[#333]">
+                                    <svg class="w-6 h-6 text-gray-400 peer-checked:text-orange-500" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                        </path>
+                                    </svg>
+                                    <span class="font-bold text-sm uppercase italic">E-Wallet</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
                     <form id="checkout-form" action="{{ route('checkout.store') }}" method="POST">
                         @csrf
+                        <input type="hidden" name="metode_pembayaran" id="metode_pembayaran_input" value="cash">
+
                         <button type="button" onclick="confirmPayment()"
-                            class="w-full bg-orange-600 hover:bg-orange-500 text-white font-black py-4 rounded-2xl transition-all shadow-lg shadow-orange-900/20 text-lg uppercase tracking-widest">
-                            Bayar Sekarang
+                            class="w-full bg-orange-600 hover:bg-orange-500 text-white font-black py-4 rounded-2xl transition-all shadow-lg shadow-orange-900/20 text-lg uppercase tracking-widest italic">
+                            Konfirmasi Pesanan
                         </button>
                     </form>
                 </div>
@@ -93,14 +133,22 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         function confirmPayment() {
+            // Ambil nilai metode yang dipilih
+            const selectedMethod = document.querySelector('input[name="metode_pembayaran"]:checked').value;
+            document.getElementById('metode_pembayaran_input').value = selectedMethod;
+
+            let textMessage = selectedMethod === 'cashless' ?
+                "Saldo kamu akan terpotong untuk pesanan ini." :
+                "Kamu akan membayar tunai saat mengambil pesanan.";
+
             Swal.fire({
-                title: 'Konfirmasi Pembayaran',
-                text: "Saldo kamu akan terpotong untuk pesanan ini.",
+                title: 'Konfirmasi Pesanan',
+                text: textMessage,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#ea580c',
                 cancelButtonColor: '#303030',
-                confirmButtonText: 'Ya, Bayar!',
+                confirmButtonText: 'Ya, Pesan Sekarang!',
                 cancelButtonText: 'Batal',
                 background: '#1e1e1e',
                 color: '#fff'
@@ -182,22 +230,22 @@
         }
     </script>
     @if (session('error'))
-<script>
-    Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: "{{ session('error') }}"
-    });
-</script>
-@endif
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: "{{ session('error') }}"
+            });
+        </script>
+    @endif
 
-@if (session('success'))
-<script>
-    Swal.fire({
-        icon: 'success',
-        title: 'Berhasil!',
-        text: "{{ session('success') }}"
-    });
-</script>
-@endif
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: "{{ session('success') }}"
+            });
+        </script>
+    @endif
 </x-app-layout>

@@ -25,24 +25,50 @@
                                 </div>
                             </div>
 
-                            <div class="flex items-center gap-3">
-                                @if ($order->status_pembayaran == 'Selesai')
-                                    {{-- Jika sudah selesai, tampilkan label saja --}}
-                                    <span
-                                        class="bg-green-500/10 text-green-500 text-[10px] font-black px-4 py-2 rounded-xl uppercase italic border border-green-500/20">
-                                        ✓ TERAMBIL
-                                    </span>
-                                @else
-                                    {{-- Jika belum, tampilkan tombol selesaikan --}}
+                            <div class="flex flex-col items-end gap-3">
+                                <div class="flex items-center gap-2">
+                                    @if ($order->metode_pembayaran == 'cashless')
+                                        <span
+                                            class="bg-blue-500/10 text-blue-400 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-tighter border border-blue-500/20">
+                                            💳 E-Wallet (Lunas)
+                                        </span>
+                                    @else
+                                        <span
+                                            class="bg-yellow-500/10 text-yellow-400 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-tighter border border-yellow-500/20">
+                                            💵 Bayar Tunai
+                                        </span>
+                                    @endif
+                                </div>
+
+                                @if ($order->status_pesanan == 'pending')
                                     <form action="{{ route('penjual.orders.update', $order->id) }}" method="POST">
-                                        @csrf
-                                        @method('PATCH')
-                                        <input type="hidden" name="status_pembayaran" value="Selesai">
+                                        @csrf @method('PATCH')
                                         <button type="submit"
-                                            class="bg-orange-600 hover:bg-orange-500 text-white text-[10px] font-black px-4 py-2 rounded-xl transition uppercase italic shadow-[0_4px_10px_rgba(234,88,12,0.2)]">
-                                            SELESAIKAN
+                                            class="bg-orange-600 hover:bg-orange-500 text-white text-[11px] font-black px-6 py-2.5 rounded-xl transition-all uppercase italic shadow-[0_4px_15px_rgba(234,88,12,0.3)] hover:scale-105 active:scale-95">
+                                            Terima Pesanan
                                         </button>
                                     </form>
+                                @elseif($order->status_pesanan == 'diproses')
+                                    <form action="{{ route('penjual.orders.update', $order->id) }}" method="POST">
+                                        @csrf @method('PATCH')
+                                        <button type="submit"
+                                            class="bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-black px-6 py-2.5 rounded-xl transition-all uppercase italic shadow-[0_4px_15px_rgba(37,99,235,0.3)]">
+                                            Siap Diambil
+                                        </button>
+                                    </form>
+                                @elseif($order->status_pesanan == 'siap_diambil')
+                                    <form action="{{ route('penjual.orders.update', $order->id) }}" method="POST">
+                                        @csrf @method('PATCH')
+                                        <button type="submit"
+                                            class="bg-green-600 hover:bg-green-500 text-white text-[11px] font-black px-6 py-2.5 rounded-xl transition-all uppercase italic shadow-[0_4px_15px_rgba(22,163,74,0.3)]">
+                                            Selesaikan (Scan)
+                                        </button>
+                                    </form>
+                                @else
+                                    <span
+                                        class="text-gray-500 font-black italic text-xs uppercase tracking-widest bg-white/5 px-4 py-2 rounded-lg border border-white/5">
+                                        ✓ Sudah Diambil
+                                    </span>
                                 @endif
                             </div>
                         </div>
@@ -56,7 +82,8 @@
                                             <b class="text-orange-500 ml-2 text-xs">x{{ $detail->quantity }}</b>
                                         </span>
                                         <span class="font-bold">Rp
-                                            {{ number_format($detail->subtotal, 0, ',', '.') }}</span>
+                                            {{ number_format($detail->menu->harga, 0, ',', '.') }}
+                                        </span>
                                     </li>
                                 @endforeach
                             </ul>
@@ -79,4 +106,43 @@
             </div>
         </div>
     </div>
+    <div id="reader" class="mx-auto mb-8 rounded-3xl overflow-hidden border-2 border-orange-500/20 shadow-2xl"
+        style="width: 100%; max-width: 500px;"></div>
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <script>
+        // Fungsi yang jalan kalau scan berhasil
+        function onScanSuccess(decodedText, decodedResult) {
+            html5QrcodeScanner.clear(); // Matikan kamera biar gak silau
+
+            Swal.fire({
+                title: 'QR Berhasil!',
+                text: 'Memproses kode: ' + decodedText,
+                icon: 'success',
+                background: '#1e1e1e',
+                color: '#fff',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                // Arahkan ke controller untuk update status
+                window.location.href = "/seller/orders/update-by-qr/" + decodedText;
+            });
+        }
+
+        // Konfigurasi dan Jalankan Scanner
+        // Sesuai screenshot kamu, pastikan id-nya tetap "reader"
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", {
+                fps: 10,
+                qrbox: {
+                    width: 250,
+                    height: 250
+                }
+            },
+            false
+        );
+
+        html5QrcodeScanner.render(onScanSuccess);
+    </script>
 </x-app-layout>

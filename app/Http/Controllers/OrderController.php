@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Menu;
 use App\Models\Order;
 use App\Models\OrderDetail;
-use App\Models\User; // Tambahkan ini
+use App\Models\User; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -22,68 +22,68 @@ class OrderController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $cart = session()->get('cart');
-        if (!$cart) {
-            return redirect()->back()->with('error', 'Keranjang belanja kamu masih kosong!');
-        }
+{
+    $cart = session()->get('cart');
+    if (!$cart) {
+        return redirect()->back()->with('error', 'Keranjang belanja kamu masih kosong!');
+    }
 
-        $total = 0;
-        foreach ($cart as $item) {
-            $total += $item['price'] * $item['quantity'];
-        }
+    $total = 0;
+    foreach ($cart as $item) {
+        $total += $item['price'] * $item['quantity'];
+    }
 
-        $user = User::find(Auth::id());
+    $user = User::find(Auth::id());
 
-        if ($user->balance < $total) {
-            return redirect()->back()->with('error', 'Saldo tidak cukup untuk melakukan pembayaran!');
-        }
+    $metode = $request->input('metode_pembayaran');
 
-        try {
-            DB::transaction(function () use ($cart, $total, $user) {
-                // 1. Kurangi Saldo Pembeli
+    if ($metode === 'cashless' && $user->balance < $total) {
+        return redirect()->back()->with('error', 'Saldo E-Wallet tidak cukup!');
+    }
+
+    try {
+        DB::transaction(function () use ($cart, $total, $user, $metode) {
+            
+            // 1. Kurangi Saldo HANYA jika bayar pakai E-Wallet (cashless)
+            if ($metode === 'cashless') {
                 $user->decrement('balance', $total);
+            }
 
-                // 2. Buat Data Order Utama (Sesuaikan dengan kolom database kamu)
-                $order = Order::create([
-                    'user_id' => $user->id,
-                    'total_harga' => $total,
-                    'status_pembayaran' => 'paid',
-                    'kode_ambil' => strtoupper(\Illuminate\Support\Str::random(6))
+            // 2. Buat Data Order Utama
+            Order::create([
+                'user_id' => $user->id,
+                'total_harga' => $total,
+                'metode_pembayaran' => $metode, 
+                'status_pembayaran' => ($metode === 'cashless' ? 'paid' : 'unpaid'), 
+                'status_pesanan' => 'pending',
+                'kode_ambil' => strtoupper(\Illuminate\Support\Str::random(6))
+            ]);
+
+            foreach ($cart as $id => $details) {
+                OrderDetail::create([
+                    'order_id' => DB::getPdo()->lastInsertId(),
+                    'menu_id'  => $id,
+                    'shop_id'  => $details['shop_id'] ?? 1,
+                    'quantity' => $details['quantity'],
+                    'subtotal' => $details['price'] * $details['quantity']
                 ]);
 
-                // 3. Masukkan Detail & Kurangi Stok Menu
-                foreach ($cart as $id => $details) {
-                    OrderDetail::create([
-                        'order_id' => $order->id,
-                        'menu_id'  => $id,
-                        'shop_id'  => $details['shop_id'] ?? 1,
-                        'quantity' => $details['quantity'],
-                        'subtotal' => $details['price'] * $details['quantity'] // Di database kamu 'subtotal'
-                    ]);
+                Menu::where('id', $id)->decrement('stok', $details['quantity']);
+            }
 
-                    // Mengurangi stok menu
-                    Menu::where('id', $id)->decrement('stok', $details['quantity']);
-                }
+            session()->forget('cart');
+        });
 
-                // 4. Kosongkan Keranjang
-                session()->forget('cart');
-            });
-
-            // Pastikan route ini ada di web.php kamu
-            return redirect()->route('pembeli.dashboard')->with('success', 'Pembayaran Berhasil! Silakan cek riwayat pesanan.');
-        } catch (\Exception $e) {
-            // Jika ada kolom yang salah, errornya akan muncul di pop-up merah
-            return redirect()->back()->with('error', 'Gagal memproses pesanan: ' . $e->getMessage());
-        }
+        return redirect()->route('pembeli.dashboard')->with('success', 'Pesanan berhasil dibuat!');
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Gagal: ' . $e->getMessage());
     }
+}
 
     public function sellerOrders()
     {
         $shop = Auth::user()->shop;
 
-        // Ambil pesanan yang memiliki item dari warung ini
-        // Kita asumsikan ada relasi di model Order ke OrderItem
         $orders = \App\Models\Order::whereHas('details', function ($query) use ($shop) {
             $query->where('shop_id', $shop->id);
         })->with(['user', 'details.menu'])->latest()->get();
@@ -93,9 +93,30 @@ class OrderController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        $order = \App\Models\Order::findOrFail($id);
-        $order->update(['status' => $request->status]); // misal: 'diproses', 'selesai'
+        $order = Order::findOrFail($id);
 
-        return back()->with('success', 'Status pesanan diperbarui!');
+        if ($order->status_pesanan == 'pending') {
+            $order->status_pesanan = 'diproses';
+        } elseif ($order->status_pesanan == 'diproses') {
+            $order->status_pesanan = 'siap_diambil';
+        } elseif ($order->status_pesanan == 'siap_diambil') {
+            $order->status_pesanan = 'selesai';
+        }
+
+        $order->save();
+        return back()->with('success', 'Status pesanan: ' . strtoupper($order->status_pesanan));
     }
+
+    public function updateByQR($kode)
+{
+    $order = Order::where('kode_ambil', $kode)->firstOrFail();
+    
+    if ($order->status_pesanan == 'siap_diambil') {
+        $order->status_pesanan = 'selesai';
+        $order->save();
+        return redirect()->route('seller.orders.index')->with('success', 'Pesanan ' . $kode . ' BERHASIL DIAMBIL!');
+    }
+
+    return redirect()->route('seller.orders.index')->with('error', 'Status pesanan tidak sesuai.');
+}
 }
