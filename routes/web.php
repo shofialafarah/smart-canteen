@@ -43,11 +43,13 @@ Route::middleware(['auth', 'role:penjual'])->group(function () {
 
     // Edit & Update
     Route::get('/seller/menu/{id}/edit', [SellerController::class, 'edit'])->name('menu.edit');
-    Route::put('/seller/menu/{id}', [SellerController::class, 'updateMenu'])->name('menu.update'); // Nama fungsi disesuaikan
+    Route::put('/seller/menu/{id}', [SellerController::class, 'updateMenu'])->name('menu.update'); 
 
     // Delete
-    Route::delete('/seller/menu/{id}', [SellerController::class, 'deleteMenu'])->name('menu.destroy'); // Nama fungsi disesuaikan
+    Route::delete('/seller/menu/{id}', [SellerController::class, 'deleteMenu'])->name('menu.destroy'); 
     Route::get('/seller/orders/update-by-qr/{kode}', [OrderController::class, 'updateByQR'])->name('seller.orders.qr_update');
+
+    Route::patch('/seller/shop/update', [SellerController::class, 'updateShop'])->name('seller.shop.update');
 });
 
 // Halaman Khusus Pembeli (Siswa/Guru)

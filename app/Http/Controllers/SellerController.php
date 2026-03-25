@@ -11,19 +11,19 @@ use Illuminate\Support\Facades\Auth;
 class SellerController extends Controller
 {
     public function index()
-{
-    // Ambil data warung milik user
-    $shop = Auth::user()->shop;
+    {
+        // Ambil data warung milik user
+        $shop = Auth::user()->shop;
 
-    // Jika belum punya warung, arahkan ke halaman buat warung atau dashboard dengan pesan
-    if (!$shop) {
-        return view('seller.dashboard', ['menus' => collect()]);
+        // Jika belum punya warung, arahkan ke halaman buat warung atau dashboard dengan pesan
+        if (!$shop) {
+            return view('seller.dashboard', ['menus' => collect()]);
+        }
+
+        $menus = Menu::where('shop_id', $shop->id)->get();
+
+        return view('seller.dashboard', compact('menus'));
     }
-
-    $menus = Menu::where('shop_id', $shop->id)->get();
-    
-    return view('seller.dashboard', compact('menus'));
-}
 
     // 1. Simpan Data Warung (Pertama kali daftar)
     public function storeShop(Request $request)
@@ -44,14 +44,42 @@ class SellerController extends Controller
         return redirect()->route('seller.dashboard')->with('success', 'Warung berhasil didaftarkan!');
     }
 
+    public function updateShop(Request $request)
+    {
+        $request->validate([
+            'nama_warung' => 'required|string|max:255',
+            'jam_buka' => 'required',
+        'jam_tutup' => 'required',
+            'foto_warung' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $shop = Auth::user()->shop;
+        $shop->nama_warung = $request->nama_warung;
+        $shop->jam_buka = $request->jam_buka;
+    $shop->jam_tutup = $request->jam_tutup;
+
+        if ($request->hasFile('foto_warung')) {
+            // Hapus foto lama jika ada
+            if ($shop->foto_warung) {
+                Storage::delete('public/' . $shop->foto_warung);
+            }
+            $path = $request->file('foto_warung')->store('shops', 'public');
+            $shop->foto_warung = $path;
+        }
+
+        $shop->save();
+
+        return back()->with('success', 'Informasi warung berhasil diperbarui!');
+    }
+
     // 2. Simpan Menu Jajanan
     public function storeMenu(Request $request)
     {
         $shop = Auth::user()->shop;
-    
-    if (!$shop) {
-        return back()->with('error', 'Kamu harus mendaftarkan warung dulu sebelum tambah menu!');
-    }
+
+        if (!$shop) {
+            return back()->with('error', 'Kamu harus mendaftarkan warung dulu sebelum tambah menu!');
+        }
 
         $request->validate([
             'nama_menu' => 'required',

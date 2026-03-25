@@ -19,6 +19,13 @@ class CartController extends Controller
     {
         $menu = Menu::with('shop')->findOrFail($id);
         $cart = session()->get('cart', []);
+        $shop = $menu->shop;
+
+        $sekarang = now()->format('H:i');
+
+        if ($sekarang < $shop->jam_buka || $sekarang > $shop->jam_tutup) {
+            return redirect()->back()->with('error', 'Waduh! Warung ini sudah tutup, nggak bisa jajan dulu ya.');
+        }
 
         // Jika menu sudah ada di keranjang, tambah jumlahnya saja
         if (isset($cart[$id])) {
@@ -31,7 +38,7 @@ class CartController extends Controller
                 "price" => $menu->harga,
                 "photo" => $menu->foto_menu,
                 "shop" => $menu->shop->nama_warung,
-                "shop_id" => $menu->shop->id 
+                "shop_id" => $menu->shop->id
             ];
         }
 
