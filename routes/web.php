@@ -35,8 +35,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 Route::middleware(['auth', 'role:penjual'])->group(function () {
     Route::get('/seller/dashboard', [SellerController::class, 'index'])->name('seller.dashboard');
 
-    Route::get('/seller/orders', [OrderController::class, 'sellerOrders'])->name('penjual.orders');
-    Route::patch('/seller/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('penjual.orders.update');
+    Route::get('/seller/orders', [OrderController::class, 'sellerOrders'])->name('seller.orders.index');
+    Route::patch('/seller/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('seller.orders.update');
     // Create & Store
     Route::get('/seller/menu/create', [MenuController::class, 'create'])->name('menu.create'); 
     Route::post('/seller/menu/store', [SellerController::class, 'storeMenu'])->name('menu.store');

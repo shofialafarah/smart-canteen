@@ -39,13 +39,13 @@
                     class="text-[10px] mt-1 font-bold uppercase {{ request()->routeIs('dashboard') ? 'text-orange-500' : 'text-gray-500' }}">Warung</span>
             </a>
 
-            <a href="{{ route('penjual.orders') }}" class="flex flex-col items-center group">
+            <a href="{{ route('seller.orders.index') }}" class="flex flex-col items-center group">
                 <div
-                    class="p-2 rounded-2xl {{ request()->routeIs('penjual.orders') ? 'bg-orange-500 text-white' : 'text-gray-500 group-hover:text-orange-400' }} transition-all">
+                    class="p-2 rounded-2xl {{ request()->routeIs('seller.orders') ? 'bg-orange-500 text-white' : 'text-gray-500 group-hover:text-orange-400' }} transition-all">
                     <i class="fa-solid fa-clipboard-list text-xl w-6 h-6 flex items-center justify-center"></i>
                 </div>
                 <span
-                    class="text-[10px] mt-1 font-bold uppercase {{ request()->routeIs('penjual.orders') ? 'text-orange-500' : 'text-gray-500' }}">Pesanan</span>
+                    class="text-[10px] mt-1 font-bold uppercase {{ request()->routeIs('seller.orders') ? 'text-orange-500' : 'text-gray-500' }}">Pesanan</span>
             </a>
         @endif
 

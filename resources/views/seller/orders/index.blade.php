@@ -41,7 +41,7 @@
                                 </div>
 
                                 @if ($order->status_pesanan == 'pending')
-                                    <form action="{{ route('penjual.orders.update', $order->id) }}" method="POST">
+                                    <form action="{{ route('seller.orders.update', $order->id) }}" method="POST">
                                         @csrf @method('PATCH')
                                         <button type="submit"
                                             class="bg-orange-600 hover:bg-orange-500 text-white text-[11px] font-black px-6 py-2.5 rounded-xl transition-all uppercase italic shadow-[0_4px_15px_rgba(234,88,12,0.3)] hover:scale-105 active:scale-95">
@@ -49,7 +49,7 @@
                                         </button>
                                     </form>
                                 @elseif($order->status_pesanan == 'diproses')
-                                    <form action="{{ route('penjual.orders.update', $order->id) }}" method="POST">
+                                    <form action="{{ route('seller.orders.update', $order->id) }}" method="POST">
                                         @csrf @method('PATCH')
                                         <button type="submit"
                                             class="bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-black px-6 py-2.5 rounded-xl transition-all uppercase italic shadow-[0_4px_15px_rgba(37,99,235,0.3)]">
@@ -57,7 +57,7 @@
                                         </button>
                                     </form>
                                 @elseif($order->status_pesanan == 'siap_diambil')
-                                    <form action="{{ route('penjual.orders.update', $order->id) }}" method="POST">
+                                    <form action="{{ route('seller.orders.update', $order->id) }}" method="POST">
                                         @csrf @method('PATCH')
                                         <button type="submit"
                                             class="bg-green-600 hover:bg-green-500 text-white text-[11px] font-black px-6 py-2.5 rounded-xl transition-all uppercase italic shadow-[0_4px_15px_rgba(22,163,74,0.3)]">
