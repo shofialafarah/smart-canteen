@@ -30,8 +30,9 @@
                 </div>
             </div>
 
-            <h3 class="font-body text-xl font-bold mb-6 italic uppercase tracking-widest text-white/50">Pilih Warung
-                Terlebih Dahulu:</h3>
+            <h3 class="font-body text-xl font-bold mb-6 italic uppercase tracking-widest text-white/50">
+                Pilih Warung Terlebih Dahulu:
+            </h3>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @forelse($shops as $shop)
@@ -49,24 +50,26 @@
                                 </div>
                             @endif
 
-                            <div
-                                class="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
+                            {{-- Label Status Buka/Tutup --}}
+                            <div class="absolute top-4 right-4 z-10">
                                 @php
-                                    $sekarang = now()->format('H:i');
-                                    $jamBuka = date('H:i', strtotime($shop->jam_buka));
-                                    $jamTutup = date('H:i', strtotime($shop->jam_tutup));
-                                    $isTutup = $sekarang < $jamBuka || $sekarang > $jamTutup;
+                                    // Ambil waktu sekarang WITA
+                                    $now = \Carbon\Carbon::now('Asia/Makassar');
+                                    $currentTime = $now->format('H:i');
+
+                                    // PASTIKAN menggunakan $shop sesuai dengan @forelse
+                                    $isOpen = $currentTime >= $shop->jam_buka && $currentTime <= $shop->jam_tutup;
                                 @endphp
 
-                                @if ($isTutup)
+                                @if ($isOpen)
                                     <span
-                                        class="bg-red-500/80 backdrop-blur-md text-white text-[10px] font-black px-3 py-1 rounded-full uppercase italic border border-red-400/50 shadow-lg">
-                                        <i class="fa-solid fa-moon mr-1"></i> Tutup
+                                        class="bg-green-500/20 text-green-400 backdrop-blur-md border border-green-500/30 text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider shadow-lg">
+                                        ● Buka
                                     </span>
                                 @else
                                     <span
-                                        class="bg-green-500/80 backdrop-blur-md text-white text-[10px] font-black px-3 py-1 rounded-full uppercase italic border border-green-400/50 shadow-lg animate-pulse">
-                                        <i class="fa-solid fa-circle text-[6px] mr-1 align-middle"></i> Buka
+                                        class="bg-red-500/20 text-red-500 backdrop-blur-md border border-red-500/30 text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider shadow-lg">
+                                        🌙 Tutup
                                     </span>
                                 @endif
                             </div>

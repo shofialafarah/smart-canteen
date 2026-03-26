@@ -8,14 +8,28 @@
                         d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
                     </path>
                 </svg>
-                Riwayat Jajan Kamu
+                Riwayat Transaksi
             </h2>
 
-            <div class="space-y-4">
-                @forelse ($orders as $order)
-                    <div class="bg-[#1e1e1e] rounded-3xl p-6 border border-white/5 shadow-xl mb-4">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
+            {{-- Navigasi Tab --}}
+            <div class="flex gap-4 mb-8 bg-white/5 p-2 rounded-2xl border border-white/5">
+                <button onclick="switchTab('jajan')" id="btn-jajan"
+                    class="flex-1 py-3 rounded-xl font-black uppercase italic text-xs transition-all bg-orange-500 text-white shadow-lg shadow-orange-500/20">
+                    <i class="fas fa-burger mr-2"></i> Riwayat Jajan
+                </button>
+                <button onclick="switchTab('topup')" id="btn-topup"
+                    class="flex-1 py-3 rounded-xl font-black uppercase italic text-xs transition-all text-gray-500 hover:text-white">
+                    <i class="fas fa-wallet mr-2"></i> Riwayat Top Up
+                </button>
+            </div>
 
+            {{-- 1. KONTEN RIWAYAT JAJAN --}}
+            <div id="content-jajan" class="space-y-4">
+                @forelse ($orders as $order)
+                    <div
+                        class="bg-[#1e1e1e] rounded-3xl p-6 border border-white/5 shadow-xl mb-4 transition-all hover:border-orange-500/30">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
+                            {{-- Waktu --}}
                             <div>
                                 <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Waktu & Metode</p>
                                 <p class="font-bold text-sm text-white">{{ $order->created_at->format('d M Y, H:i') }}
@@ -27,10 +41,10 @@
                                 </span>
                             </div>
 
+                            {{-- Kode Ambil --}}
                             <div
                                 class="bg-orange-600/10 border border-orange-500/20 px-4 py-3 rounded-2xl text-center flex flex-col items-center justify-center">
                                 <p class="text-[10px] text-orange-500 uppercase font-bold mb-1">Kode Ambil</p>
-
                                 @if ($order->status_pesanan == 'siap_diambil')
                                     <div class="bg-white p-1 rounded-lg mb-2 cursor-pointer hover:scale-105 transition-transform"
                                         onclick="showQR('{{ $order->kode_ambil }}')"
@@ -46,17 +60,24 @@
                                 @endif
                             </div>
 
+                            {{-- Harga --}}
                             <div class="text-center md:text-left">
                                 <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Total & Status Bayar
                                 </p>
                                 <p class="text-xl font-black text-orange-500">Rp
                                     {{ number_format($order->total_harga, 0, ',', '.') }}</p>
-                                <p
-                                    class="text-[10px] font-bold {{ $order->status_pembayaran == 'paid' ? 'text-green-500' : 'text-red-500' }}">
-                                    {{ $order->status_pembayaran == 'paid' ? '● LUNAS' : '● BELUM BAYAR' }}
-                                </p>
+
+                                @if ($order->metode_pembayaran == 'cashless')
+                                    <p class="text-[10px] font-bold text-green-500">● LUNAS (SALDO)</p>
+                                @elseif($order->status_pembayaran == 'paid')
+                                    <p class="text-[10px] font-bold text-green-500">● LUNAS (CASH)</p>
+                                @else
+                                    <p class="text-[10px] font-bold text-red-500 animate-pulse">● BELUM BAYAR (TUNAI)
+                                    </p>
+                                @endif
                             </div>
 
+                            {{-- Status Pesanan --}}
                             <div class="text-right">
                                 <p
                                     class="text-[10px] text-gray-500 uppercase tracking-widest mb-2 text-center md:text-right">
@@ -80,18 +101,68 @@
                                     {{ $statusText[$order->status_pesanan] ?? $order->status_pesanan }}
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 @empty
-                    <div class="text-center py-20">
-                        <p class="text-gray-500">Belum ada riwayat pesanan nih. Yuk jajan dulu!</p>
+                    <div class="text-center py-20 text-gray-500">
+                        <p>Belum ada riwayat pesanan nih. Yuk jajan dulu!</p>
                     </div>
                 @endforelse
             </div>
+
+            {{-- 2. KONTEN RIWAYAT TOP UP --}}
+            <div id="content-topup" class="space-y-4 hidden">
+                @forelse ($topups as $tp)
+                    <div
+                        class="bg-[#1e1e1e] rounded-3xl p-6 border border-white/5 shadow-xl flex justify-between items-center transition-all hover:border-orange-500/30">
+                        <div>
+                            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">
+                                {{ $tp->created_at->format('d M Y, H:i') }}</p>
+                            <p class="text-xl font-black text-white">Rp {{ number_format($tp->nominal, 0, ',', '.') }}
+                            </p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-2">Status Saldo</p>
+                            <span
+                                class="px-4 py-2 rounded-xl text-[10px] font-black uppercase 
+                                {{ $tp->status == 'pending' ? 'bg-yellow-500/20 text-yellow-500' : 'bg-green-500/20 text-green-500' }}">
+                                {{ $tp->status == 'pending' ? '🕒 Menunggu' : '✅ Masuk' }}
+                            </span>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center py-20 text-gray-500">Belum ada riwayat top up.</div>
+                @endforelse
+            </div>
+
         </div>
     </div>
+
+    {{-- SCRIPT PINDAH TAB --}}
     <script>
+        function switchTab(tab) {
+            const contentJajan = document.getElementById('content-jajan');
+            const contentTopup = document.getElementById('content-topup');
+            const btnJajan = document.getElementById('btn-jajan');
+            const btnTopup = document.getElementById('btn-topup');
+
+            if (tab === 'jajan') {
+                contentJajan.classList.remove('hidden');
+                contentTopup.classList.add('hidden');
+                btnJajan.classList.add('bg-orange-500', 'text-white', 'shadow-lg', 'shadow-orange-500/20');
+                btnJajan.classList.remove('text-gray-500');
+                btnTopup.classList.remove('bg-orange-500', 'text-white', 'shadow-lg', 'shadow-orange-500/20');
+                btnTopup.classList.add('text-gray-500');
+            } else {
+                contentTopup.classList.remove('hidden');
+                contentJajan.classList.add('hidden');
+                btnTopup.classList.add('bg-orange-500', 'text-white', 'shadow-lg', 'shadow-orange-500/20');
+                btnTopup.classList.remove('text-gray-500');
+                btnJajan.classList.remove('bg-orange-500', 'text-white', 'shadow-lg', 'shadow-orange-500/20');
+                btnJajan.classList.add('text-gray-500');
+            }
+        }
+
         function showQR(kode) {
             // Mengambil elemen SVG QR Code
             const qrSvg = document.querySelector(`#qr-container-${kode} svg`).outerHTML;

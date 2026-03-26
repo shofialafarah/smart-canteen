@@ -33,12 +33,12 @@ class OrderController extends Controller
         $shop = \App\Models\Shop::find($shopId);
 
         if ($shop) {
-            $sekarang = now()->format('H:i:s');
-            $jamBuka = $shop->jam_buka;
-            $jamTutup = $shop->jam_tutup;
+            $sekarang = \Carbon\Carbon::now('Asia/Makassar')->format('H:i');
+            $jamBuka = \Carbon\Carbon::parse($shop->jam_buka)->format('H:i');
+            $jamTutup = \Carbon\Carbon::parse($shop->jam_tutup)->format('H:i');
 
             if ($sekarang < $jamBuka || $sekarang > $jamTutup) {
-                return redirect()->back()->with('error', "Maaf, {$shop->nama_warung} sudah tutup. Jam operasional: {$jamBuka} - {$jamTutup}");
+                return redirect()->back()->with('error', "Maaf, {$shop->nama_warung} sudah tutup. Jam operasional: {$jamBuka} - {$jamTutup}. (Waktu sistem: {$sekarang})");
             }
         }
 
@@ -48,26 +48,25 @@ class OrderController extends Controller
         }
 
         $user = User::find(Auth::id());
-
         $metode = $request->input('metode_pembayaran');
 
+        // Validasi Saldo
         if ($metode === 'cashless' && $user->balance < $total) {
             return redirect()->back()->with('error', 'Saldo E-Wallet tidak cukup!');
         }
 
         try {
             DB::transaction(function () use ($cart, $total, $user, $metode) {
-
-                // 1. Kurangi Saldo HANYA jika bayar pakai E-Wallet (cashless)
                 if ($metode === 'cashless') {
                     $user->decrement('balance', $total);
                 }
 
-                // 2. Buat Data Order Utama
-                Order::create([
+                // Simpan Order
+                $order = Order::create([
                     'user_id' => $user->id,
                     'total_harga' => $total,
                     'metode_pembayaran' => $metode,
+                    // Status otomatis paid jika cashless, unpaid jika tunai
                     'status_pembayaran' => ($metode === 'cashless' ? 'paid' : 'unpaid'),
                     'status_pesanan' => 'pending',
                     'kode_ambil' => strtoupper(\Illuminate\Support\Str::random(6))
@@ -75,7 +74,7 @@ class OrderController extends Controller
 
                 foreach ($cart as $id => $details) {
                     OrderDetail::create([
-                        'order_id' => DB::getPdo()->lastInsertId(),
+                        'order_id' => $order->id, // Gunakan $order->id yang baru dibuat
                         'menu_id'  => $id,
                         'shop_id'  => $details['shop_id'] ?? 1,
                         'quantity' => $details['quantity'],

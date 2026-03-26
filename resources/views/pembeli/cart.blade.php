@@ -109,9 +109,17 @@
                             </label>
                         </div>
                     </div>
+                    <div
+                        class="flex justify-between items-center mb-8 bg-black/20 p-6 rounded-2xl border border-white/5">
+                        <span class="text-gray-400 font-medium">Total Bayar:</span>
+                        <span class="text-3xl font-black text-orange-500 italic">
+                            Rp {{ number_format($total, 0, ',', '.') }}
+                        </span>
+                    </div>
 
-                    <form id="checkout-form" action="{{ route('checkout.store') }}" method="POST">
+                    <form id="checkout-form" action="{{ route('order.store') }}" method="POST">
                         @csrf
+                        {{-- Input hidden ini akan diisi otomatis oleh JavaScript saat memilih radio button --}}
                         <input type="hidden" name="metode_pembayaran" id="metode_pembayaran_input" value="cash">
 
                         <button type="button" onclick="confirmPayment()"
@@ -233,8 +241,11 @@
         <script>
             Swal.fire({
                 icon: 'error',
-                title: 'Error',
-                text: "{{ session('error') }}"
+                title: 'Waduh!',
+                text: "{!! addslashes(session('error')) !!}",
+                background: '#1e1e1e',
+                color: '#fff',
+                confirmButtonColor: '#f97316'
             });
         </script>
     @endif
@@ -244,7 +255,11 @@
             Swal.fire({
                 icon: 'success',
                 title: 'Berhasil!',
-                text: "{{ session('success') }}"
+                text: "{!! addslashes(session('success')) !!}",
+                background: '#1e1e1e',
+                color: '#fff',
+                showConfirmButton: false,
+                timer: 1500
             });
         </script>
     @endif

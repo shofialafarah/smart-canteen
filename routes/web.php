@@ -7,6 +7,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SellerController;
+use App\Http\Controllers\TopUpController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -27,12 +28,12 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/verifikasi-warung', [AdminController::class, 'verifyShop'])->name('verify-shop');
-    
+
     Route::get('/users', [AdminController::class, 'manageUsers'])->name('users');
     Route::put('/users/{id}', [AdminController::class, 'update'])->name('users.update');
     Route::delete('/users/{id}', [AdminController::class, 'destroy'])->name('users.destroy');
-    Route::get('/topup', [AdminController::class, 'topupIndex'])->name('topup.index');
-    Route::patch('/topup/{id}/approve', [AdminController::class, 'approveTopUp'])->name('topup.approve');
+    Route::get('/topup', [TopUpController::class, 'adminIndex'])->name('topup.index');
+    Route::patch('/topup/{id}/approve', [TopUpController::class, 'approve'])->name('topup.approve');
 });
 
 // Halaman Khusus Penjual (Warung)
@@ -42,15 +43,15 @@ Route::middleware(['auth', 'role:penjual'])->group(function () {
     Route::get('/seller/orders', [OrderController::class, 'sellerOrders'])->name('seller.orders.index');
     Route::patch('/seller/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('seller.orders.update');
     // Create & Store
-    Route::get('/seller/menu/create', [MenuController::class, 'create'])->name('menu.create'); 
+    Route::get('/seller/menu/create', [MenuController::class, 'create'])->name('menu.create');
     Route::post('/seller/menu/store', [SellerController::class, 'storeMenu'])->name('menu.store');
 
     // Edit & Update
     Route::get('/seller/menu/{id}/edit', [SellerController::class, 'edit'])->name('menu.edit');
-    Route::put('/seller/menu/{id}', [SellerController::class, 'updateMenu'])->name('menu.update'); 
+    Route::put('/seller/menu/{id}', [SellerController::class, 'updateMenu'])->name('menu.update');
 
     // Delete
-    Route::delete('/seller/menu/{id}', [SellerController::class, 'deleteMenu'])->name('menu.destroy'); 
+    Route::delete('/seller/menu/{id}', [SellerController::class, 'deleteMenu'])->name('menu.destroy');
     Route::get('/seller/orders/update-by-qr/{kode}', [OrderController::class, 'updateByQR'])->name('seller.orders.qr_update');
 
     Route::patch('/seller/shop/update', [SellerController::class, 'updateShop'])->name('seller.shop.update');
@@ -58,20 +59,24 @@ Route::middleware(['auth', 'role:penjual'])->group(function () {
 
 // Halaman Khusus Pembeli (Siswa/Guru)
 Route::middleware(['auth', 'role:pembeli'])->group(function () {
-// Dashboard utama (Daftar Warung)
-Route::get('/canteen', [CanteenController::class, 'index'])->name('pembeli.dashboard');
+    // Dashboard utama (Daftar Warung)
+    Route::get('/canteen', [CanteenController::class, 'index'])->name('pembeli.dashboard');
 
-// Detail Warung (Daftar Menu dari warung tersebut)
-Route::get('/canteen/shop/{id}', [CanteenController::class, 'showShop'])->name('pembeli.shop.detail');
+    // Detail Warung (Daftar Menu dari warung tersebut)
+    Route::get('/canteen/shop/{id}', [CanteenController::class, 'showShop'])->name('pembeli.shop.detail');
     // Rute Keranjang
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::get('/add-to-cart/{id}', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/add-to-cart/{id}', [CartController::class, 'add'])->name('cart.add');
     Route::patch('/update-cart', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/remove-from-cart', [CartController::class, 'remove'])->name('cart.remove');
 
     Route::post('/checkout', [OrderController::class, 'store'])->name('checkout.store');
+    Route::post('/order-store', [OrderController::class, 'store'])->name('order.store');
 
-    Route::get('/history', [OrderController::class, 'index'])->name('pembeli.history');
+    Route::get('/history', [TopUpController::class, 'index'])->name('pembeli.history');
+
+    Route::get('/topup', [TopUpController::class, 'create'])->name('pembeli.topup');
+    Route::post('/topup', [TopUpController::class, 'store'])->name('pembeli.topup.store');
 });
 
 require __DIR__ . '/auth.php';

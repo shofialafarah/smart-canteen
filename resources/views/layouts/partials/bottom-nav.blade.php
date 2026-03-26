@@ -3,6 +3,7 @@
         class="bg-[#1e1e1e]/80 backdrop-blur-xl border border-white/10 rounded-3xl p-3 shadow-2xl flex justify-around items-center">
 
         @if (auth()->user()->role === 'pembeli')
+            {{-- Menu Kantin --}}
             <a href="{{ route('pembeli.dashboard') }}" class="flex flex-col items-center group">
                 <div
                     class="p-2 rounded-2xl {{ request()->routeIs('pembeli.dashboard') ? 'bg-orange-500 text-white' : 'text-gray-500 group-hover:text-orange-400' }} transition-all">
@@ -16,6 +17,17 @@
                     class="text-[10px] mt-1 font-bold uppercase {{ request()->routeIs('pembeli.dashboard') ? 'text-orange-500' : 'text-gray-500' }}">Kantin</span>
             </a>
 
+            {{-- TAMBAHAN MENU TOP UP PEMBELI --}}
+            <a href="{{ route('pembeli.topup') }}" class="flex flex-col items-center group">
+                <div
+                    class="p-2 rounded-2xl {{ request()->routeIs('pembeli.topup') ? 'bg-orange-500 text-white' : 'text-gray-500 group-hover:text-orange-400' }} transition-all">
+                    <i class="fa-solid fa-wallet text-xl w-6 h-6 flex items-center justify-center"></i>
+                </div>
+                <span
+                    class="text-[10px] mt-1 font-bold uppercase {{ request()->routeIs('pembeli.topup') ? 'text-orange-500' : 'text-gray-500' }}">Topup</span>
+            </a>
+
+            {{-- Menu Riwayat --}}
             <a href="{{ route('pembeli.history') }}" class="flex flex-col items-center group">
                 <div
                     class="p-2 rounded-2xl {{ request()->routeIs('pembeli.history') ? 'bg-orange-500 text-white' : 'text-gray-500 group-hover:text-orange-400' }} transition-all">
@@ -69,10 +81,12 @@
             </a>
 
             <a href="{{ route('admin.topup.index') }}" class="flex flex-col items-center group">
-                <div class="p-2 rounded-2xl {{ request()->routeIs('admin.topup.index') ? 'bg-orange-500 text-white' : 'text-gray-500 group-hover:text-orange-400' }} transition-all">
+                <div
+                    class="p-2 rounded-2xl {{ request()->routeIs('admin.topup.index') ? 'bg-orange-500 text-white' : 'text-gray-500 group-hover:text-orange-400' }} transition-all">
                     <i class="fa-solid fa-wallet text-xl w-6 h-6 flex items-center justify-center"></i>
                 </div>
-                <span class="text-[10px] mt-1 font-bold uppercase {{ request()->routeIs('admin.topup.index') ? 'text-orange-500' : 'text-gray-500' }}">Topup</span>
+                <span
+                    class="text-[10px] mt-1 font-bold uppercase {{ request()->routeIs('admin.topup.index') ? 'text-orange-500' : 'text-gray-500' }}">Topup</span>
             </a>
         @endif
 

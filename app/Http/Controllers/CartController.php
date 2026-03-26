@@ -15,23 +15,29 @@ class CartController extends Controller
     }
 
     // Menambah menu ke keranjang
-    public function add($id)
+    public function add(Request $request, $id) // Tambahkan Request $request
     {
         $menu = Menu::with('shop')->findOrFail($id);
         $cart = session()->get('cart', []);
         $shop = $menu->shop;
 
-        $sekarang = now()->format('H:i');
+        // Paksa ambil waktu WITA agar sinkron dengan jam buka warung
+        $sekarang = \Carbon\Carbon::now('Asia/Makassar')->format('H:i');
 
+        // Cek apakah warung buka
         if ($sekarang < $shop->jam_buka || $sekarang > $shop->jam_tutup) {
             return redirect()->back()->with('error', 'Waduh! Warung ini sudah tutup, nggak bisa jajan dulu ya.');
         }
 
-        // Jika menu sudah ada di keranjang, tambah jumlahnya saja
+        // Pengecekan stok (Tambahan agar lebih aman)
+        if ($menu->stok <= 0) {
+            return redirect()->back()->with('error', 'Maaf, stok menu ini sudah habis!');
+        }
+
+        // Logika tambah ke keranjang
         if (isset($cart[$id])) {
             $cart[$id]['quantity']++;
         } else {
-            // Jika belum ada, tambahkan data baru
             $cart[$id] = [
                 "name" => $menu->nama_menu,
                 "quantity" => 1,
@@ -43,7 +49,9 @@ class CartController extends Controller
         }
 
         session()->put('cart', $cart);
-        return redirect()->back()->with('success', 'Menu berhasil ditambah!');
+
+        // Gunakan session()->flash untuk memastikan notifikasi muncul
+        return redirect()->back()->with('success', 'Nyam! ' . $menu->nama_menu . ' berhasil ditambah ke keranjang.');
     }
 
     public function update(Request $request)

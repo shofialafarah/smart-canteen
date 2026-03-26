@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\Shop;
 use App\Models\TopUp;
 use App\Models\User;
-use App\Models\Shop;
-use App\Models\Order;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -20,30 +21,6 @@ class AdminController extends Controller
         $orderHariIni = Order::whereDate('created_at', today())->count();
 
         return view('admin.dashboard', compact('totalSaldo', 'pendingTopUpCount', 'totalWarung', 'orderHariIni'));
-    }
-
-    // 2. Halaman Daftar Permintaan Top Up
-    public function topupIndex()
-    {
-        $pendingTopUps = TopUp::with('user')->where('status', 'pending')->latest()->get();
-        return view('admin.topup.index', compact('pendingTopUps'));
-    }
-
-    // 3. Proses Approval Top Up
-    public function approveTopUp($id)
-    {
-        $topup = TopUp::findOrFail($id);
-
-        if ($topup->status !== 'pending') {
-            return back()->with('error', 'Transaksi ini sudah diproses.');
-        }
-
-        DB::transaction(function () use ($topup) {
-            $topup->user->increment('balance', $topup->nominal);
-            $topup->update(['status' => 'success']);
-        });
-
-        return back()->with('success', 'Saldo berhasil ditambahkan!');
     }
 
     // 4. Halaman Kelola User (Biar nanti gak error lagi pas diklik)
@@ -66,7 +43,7 @@ class AdminController extends Controller
     {
         $user = User::findOrFail($id);
 
-        if ($user->id === auth()->id()) {
+        if ($user->id === Auth::id()) {
             return back()->with('error', 'Tidak bisa menghapus akun sendiri!');
         }
 
