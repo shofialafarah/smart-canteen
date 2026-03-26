@@ -24,11 +24,13 @@ Route::middleware('auth')->group(function () {
 });
 
 // Halaman Khusus Admin Sekolah
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-    Route::get('/admin/verifikasi-warung', [AdminController::class, 'verifyShop']);
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+    Route::get('/verifikasi-warung', [AdminController::class, 'verifyShop'])->name('verify-shop');
     
-    Route::get('/admin/users', [AdminController::class, 'manageUsers'])->name('admin.users');
+    Route::get('/users', [AdminController::class, 'manageUsers'])->name('users');
+    Route::get('/topup', [AdminController::class, 'topupIndex'])->name('topup.index');
+    Route::patch('/topup/{id}/approve', [AdminController::class, 'approveTopUp'])->name('topup.approve');
 });
 
 // Halaman Khusus Penjual (Warung)

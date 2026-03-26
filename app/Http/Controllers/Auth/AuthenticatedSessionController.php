@@ -31,13 +31,13 @@ class AuthenticatedSessionController extends Controller
 
         // Logic Redirect Berdasarkan Role
         if ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard'); // Pastikan route ini ada
+            return redirect()->route('admin.dashboard');
         } elseif ($user->role === 'penjual') {
-            return redirect()->route('dashboard'); // Dashboard penjual yang tadi kamu buat
+            return redirect()->route('seller.dashboard');
         }
 
         // Default untuk Pembeli/Siswa/Guru
-        return redirect()->intended(route('dashboard'));
+        return redirect()->route('pembeli.dashboard');
     }
 
     /**

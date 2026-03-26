@@ -67,6 +67,13 @@
                 <span
                     class="text-[10px] mt-1 font-bold uppercase {{ request()->routeIs('admin.users') ? 'text-orange-500' : 'text-gray-500' }}">User</span>
             </a>
+
+            <a href="{{ route('admin.topup.index') }}" class="flex flex-col items-center group">
+                <div class="p-2 rounded-2xl {{ request()->routeIs('admin.topup.index') ? 'bg-orange-500 text-white' : 'text-gray-500 group-hover:text-orange-400' }} transition-all">
+                    <i class="fa-solid fa-wallet text-xl w-6 h-6 flex items-center justify-center"></i>
+                </div>
+                <span class="text-[10px] mt-1 font-bold uppercase {{ request()->routeIs('admin.topup.index') ? 'text-orange-500' : 'text-gray-500' }}">Topup</span>
+            </a>
         @endif
 
         <a href="{{ route('profile.edit') }}" class="flex flex-col items-center group">

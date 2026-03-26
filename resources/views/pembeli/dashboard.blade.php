@@ -53,21 +53,22 @@
                                 class="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
                                 @php
                                     $sekarang = now()->format('H:i');
-        // Pastikan format jam di database (misal 07:00:00) cocok dengan format H:i
-        $jamBuka = date('H:i', strtotime($shop->jam_buka));
-        $jamTutup = date('H:i', strtotime($shop->jam_tutup));
-        $isTutup = $sekarang < $jamBuka || $sekarang > $jamTutup;
+                                    $jamBuka = date('H:i', strtotime($shop->jam_buka));
+                                    $jamTutup = date('H:i', strtotime($shop->jam_tutup));
+                                    $isTutup = $sekarang < $jamBuka || $sekarang > $jamTutup;
                                 @endphp
 
                                 @if ($isTutup)
-        <span class="bg-red-500/80 backdrop-blur-md text-white text-[10px] font-black px-3 py-1 rounded-full uppercase italic border border-red-400/50 shadow-lg">
-            <i class="fa-solid fa-moon mr-1"></i> Tutup
-        </span>
-    @else
-        <span class="bg-green-500/80 backdrop-blur-md text-white text-[10px] font-black px-3 py-1 rounded-full uppercase italic border border-green-400/50 shadow-lg animate-pulse">
-            <i class="fa-solid fa-circle text-[6px] mr-1 align-middle"></i> Buka
-        </span>
-    @endif
+                                    <span
+                                        class="bg-red-500/80 backdrop-blur-md text-white text-[10px] font-black px-3 py-1 rounded-full uppercase italic border border-red-400/50 shadow-lg">
+                                        <i class="fa-solid fa-moon mr-1"></i> Tutup
+                                    </span>
+                                @else
+                                    <span
+                                        class="bg-green-500/80 backdrop-blur-md text-white text-[10px] font-black px-3 py-1 rounded-full uppercase italic border border-green-400/50 shadow-lg animate-pulse">
+                                        <i class="fa-solid fa-circle text-[6px] mr-1 align-middle"></i> Buka
+                                    </span>
+                                @endif
                             </div>
                         </div>
 
