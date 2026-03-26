@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -26,21 +27,34 @@ class ProfileController extends Controller
      */
     public function update(Request $request)
     {
-        // Validasi hanya nama, karena email/nisn kita disable
+        // Coba longgarkan validasi untuk testing
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'foto_profil' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120'], // Naikkan ke 5MB
         ]);
 
-        $request->user()->fill($request->only('name'));
+        $user = $request->user();
 
-        // Jika user mengubah email (tapi di tampilan kamu disable, jadi ini aman)
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        // Gunakan update() untuk memastikan fillable bekerja
+        $user->fill([
+            'name' => $request->name,
+        ]);
+
+        if ($request->hasFile('foto_profil')) {
+            // Hapus foto lama
+            if ($user->foto_profil) {
+                Storage::disk('public')->delete($user->foto_profil);
+            }
+
+            // Simpan dengan nama unik agar tidak bentrok
+            $file = $request->file('foto_profil');
+            $path = $file->store('profile-photos', 'public');
+            $user->foto_profil = $path;
         }
 
-        $request->user()->save();
+        $user->save();
 
-        return Redirect::route('profile.edit')->with('success', 'Profil berhasil diperbarui!');
+        return redirect()->back()->with('success', 'Profil kamu berhasil diperbarui!');
     }
 
     /**

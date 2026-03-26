@@ -13,9 +13,51 @@
                 <h3 class="font-display text-lg font-bold text-orange-500 uppercase tracking-widest mb-6">Informasi Dasar
                 </h3>
 
-                <form method="post" action="{{ route('profile.update') }}" class="space-y-6">
+                <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data"
+                    class="space-y-6">
                     @csrf
                     @method('patch')
+
+                    <div class="flex flex-col items-center mb-8 bg-black/20 p-6 rounded-3xl border border-white/5">
+                        <div class="relative group">
+                            @if ($user->foto_profil)
+                                <img src="{{ asset('storage/' . $user->foto_profil) }}" id="preview-photo"
+                                    class="w-32 h-32 rounded-3xl object-cover border-2 border-orange-500 shadow-xl shadow-orange-900/20">
+                            @else
+                                <div id="placeholder-photo"
+                                    class="w-32 h-32 rounded-3xl bg-[#121212] border-2 border-dashed border-white/10 flex items-center justify-center text-orange-500 shadow-inner">
+                                    <i class="fa-solid fa-user text-4xl"></i>
+                                </div>
+                                <img id="preview-photo"
+                                    class="hidden w-32 h-32 rounded-3xl object-cover border-2 border-orange-500 shadow-xl shadow-orange-900/20">
+                            @endif
+
+                            <label for="foto_profil"
+                                class="absolute -bottom-2 -right-2 bg-orange-600 hover:bg-orange-500 w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer transition-all border-4 border-[#1e1e1e] shadow-lg">
+                                <i class="fa-solid fa-camera text-sm"></i>
+                                <input type="file" name="foto_profil" id="foto_profil" class="hidden"
+                                    accept="image/*" onchange="previewImage(this)">
+                            </label>
+                        </div>
+                        <p class="text-[10px] text-gray-500 mt-4 uppercase font-bold tracking-widest italic">Ketuk icon
+                            kamera untuk ganti foto</p>
+                    </div>
+
+                    <script>
+                        function previewImage(input) {
+                            const preview = document.getElementById('preview-photo');
+                            const placeholder = document.getElementById('placeholder-photo');
+                            if (input.files && input.files[0]) {
+                                const reader = new FileReader();
+                                reader.onload = function(e) {
+                                    preview.src = e.target.result;
+                                    preview.classList.remove('hidden');
+                                    if (placeholder) placeholder.classList.add('hidden');
+                                }
+                                reader.readAsDataURL(input.files[0]);
+                            }
+                        }
+                    </script>
 
                     <div>
                         <label class="text-xs text-gray-500 ml-1 uppercase font-bold tracking-wider">Nama

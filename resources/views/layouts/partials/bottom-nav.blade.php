@@ -1,4 +1,4 @@
-<div class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-md z-50">
+<div id="bottom-nav" class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-md z-50">
     <div
         class="bg-[#1e1e1e]/80 backdrop-blur-xl border border-white/10 rounded-3xl p-3 shadow-2xl flex justify-around items-center">
 

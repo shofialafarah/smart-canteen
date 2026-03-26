@@ -29,6 +29,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/verifikasi-warung', [AdminController::class, 'verifyShop'])->name('verify-shop');
     
     Route::get('/users', [AdminController::class, 'manageUsers'])->name('users');
+    Route::put('/users/{id}', [AdminController::class, 'update'])->name('users.update');
+    Route::delete('/users/{id}', [AdminController::class, 'destroy'])->name('users.destroy');
     Route::get('/topup', [AdminController::class, 'topupIndex'])->name('topup.index');
     Route::patch('/topup/{id}/approve', [AdminController::class, 'approveTopUp'])->name('topup.approve');
 });

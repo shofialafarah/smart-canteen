@@ -47,12 +47,34 @@ class AdminController extends Controller
     }
 
     // 4. Halaman Kelola User (Biar nanti gak error lagi pas diklik)
-    public function manageUsers()
+    public function manageUsers(Request $request)
     {
-        $users = User::paginate(10);
+        $search = $request->input('search');
+
+        $users = User::where('role', '!=', 'admin') // Sembunyikan Admin
+            ->when($search, function ($query, $search) {
+                return $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->paginate(10);
+
         return view('admin.users.index', compact('users'));
     }
 
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'Tidak bisa menghapus akun sendiri!');
+        }
+
+        $user->delete();
+
+        return back()->with('success', 'User berhasil dihapus.');
+    }
+    
     // 5. Verifikasi Warung (Biar gak error juga)
     public function verifyShop()
     {
