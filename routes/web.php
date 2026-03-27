@@ -29,14 +29,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/verifikasi-warung', [AdminController::class, 'verifyShop'])->name('verify-shop');
 
+    Route::post('/users', [ProfileController::class, 'store'])->name('users.store'); 
+    Route::put('/users/update/{id}', [ProfileController::class, 'updateUser'])->name('users.update');
+    
     Route::get('/users', [AdminController::class, 'manageUsers'])->name('users');
-    Route::put('/users/{id}', [AdminController::class, 'update'])->name('users.update');
     Route::delete('/users/{id}', [AdminController::class, 'destroy'])->name('users.destroy');
+    // ------------------------------
+
     Route::get('/topup', [TopUpController::class, 'adminIndex'])->name('topup.index');
     Route::patch('/topup/{id}/approve', [TopUpController::class, 'approve'])->name('topup.approve');
 });
 
-// Halaman Khusus Penjual (Warung)
 // Halaman Khusus Penjual (Warung)
 Route::middleware(['auth', 'role:penjual'])->group(function () {
     Route::get('/seller/dashboard', [SellerController::class, 'index'])->name('seller.dashboard');

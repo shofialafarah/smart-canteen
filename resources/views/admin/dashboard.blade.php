@@ -5,7 +5,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
                 <div class="bg-[#1e1e1e] p-6 rounded-3xl border border-white/5 shadow-xl">
-                    <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest">Total Dana Siswa</p>
+                    <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest">Total Dana</p>
                     <h3 class="text-2xl font-black text-white mt-2 italic">Rp {{ number_format($totalSaldo, 0, ',', '.') }}</h3>
                 </div>
 

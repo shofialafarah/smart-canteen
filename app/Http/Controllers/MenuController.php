@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Menu;
+use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Menu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -48,7 +49,6 @@ class MenuController extends Controller
         $menu = Menu::findOrFail($id);
         $categories = Category::all();
 
-        // Proteksi: Pastikan menu milik warung user yang login
         if ($menu->shop_id !== Auth::user()->shop->id) {
             abort(403, 'Akses ditolak.');
         }
