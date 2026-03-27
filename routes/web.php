@@ -37,24 +37,25 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 // Halaman Khusus Penjual (Warung)
+// Halaman Khusus Penjual (Warung)
 Route::middleware(['auth', 'role:penjual'])->group(function () {
     Route::get('/seller/dashboard', [SellerController::class, 'index'])->name('seller.dashboard');
+    Route::patch('/seller/shop/update', [SellerController::class, 'updateShop'])->name('seller.shop.update');
+    Route::post('/seller/shop/store', [SellerController::class, 'storeShop'])->name('seller.shop.store');
 
+    // Pesanan & QR
     Route::get('/seller/orders', [OrderController::class, 'sellerOrders'])->name('seller.orders.index');
     Route::patch('/seller/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('seller.orders.update');
-    // Create & Store
-    Route::get('/seller/menu/create', [MenuController::class, 'create'])->name('menu.create');
-    Route::post('/seller/menu/store', [SellerController::class, 'storeMenu'])->name('menu.store');
-
-    // Edit & Update
-    Route::get('/seller/menu/{id}/edit', [SellerController::class, 'edit'])->name('menu.edit');
-    Route::put('/seller/menu/{id}', [SellerController::class, 'updateMenu'])->name('menu.update');
-
-    // Delete
-    Route::delete('/seller/menu/{id}', [SellerController::class, 'deleteMenu'])->name('menu.destroy');
     Route::get('/seller/orders/update-by-qr/{kode}', [OrderController::class, 'updateByQR'])->name('seller.orders.qr_update');
 
-    Route::patch('/seller/shop/update', [SellerController::class, 'updateShop'])->name('seller.shop.update');
+    // Rute Menu (Sekarang Menggunakan MenuController)
+    Route::prefix('seller/menu')->name('menu.')->group(function () {
+        Route::get('/create', [MenuController::class, 'create'])->name('create');
+        Route::post('/store', [MenuController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [MenuController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [MenuController::class, 'update'])->name('update');
+        Route::delete('/{id}', [MenuController::class, 'destroy'])->name('destroy');
+    });
 });
 
 // Halaman Khusus Pembeli (Siswa/Guru)
@@ -70,7 +71,6 @@ Route::middleware(['auth', 'role:pembeli'])->group(function () {
     Route::patch('/update-cart', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/remove-from-cart', [CartController::class, 'remove'])->name('cart.remove');
 
-    Route::post('/checkout', [OrderController::class, 'store'])->name('checkout.store');
     Route::post('/order-store', [OrderController::class, 'store'])->name('order.store');
 
     Route::get('/history', [TopUpController::class, 'index'])->name('pembeli.history');

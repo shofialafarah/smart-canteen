@@ -42,7 +42,7 @@ class UserSeeder extends Seeder
             'name' => 'Siswa Teladan',
             'nisn' => '12345678', // NISN diisi
             'email' => null,      // Email dikosongkan (Siswa gak perlu email)
-            'password' => Hash::make('12345678'), // Password SAMA dengan NISN
+            'password' => Hash::make('123123123'), // Password SAMA dengan NISN
             'role' => 'pembeli',
             'balance' => 50000,
         ]);
@@ -52,7 +52,7 @@ class UserSeeder extends Seeder
             'name' => 'Pak Guru Budi',
             'nisn' => null,       // Guru gak punya NISN
             'email' => 'budi@guru.com',
-            'password' => Hash::make('guru123'),
+            'password' => Hash::make('123123123'),
             'role' => 'pembeli',
             'balance' => 100000,
         ]);

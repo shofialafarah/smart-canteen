@@ -125,9 +125,12 @@ class OrderController extends Controller
         $order = Order::where('kode_ambil', $kode)->firstOrFail();
 
         if ($order->status_pesanan == 'siap_diambil') {
+            $order->status_pembayaran = 'paid';
+
             $order->status_pesanan = 'selesai';
             $order->save();
-            return redirect()->route('seller.orders.index')->with('success', 'Pesanan ' . $kode . ' BERHASIL DIAMBIL!');
+
+            return redirect()->route('seller.orders.index')->with('success', 'Pesanan Berhasil Diambil!');
         }
 
         return redirect()->route('seller.orders.index')->with('error', 'Status pesanan tidak sesuai.');

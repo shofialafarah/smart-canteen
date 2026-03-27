@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->decimal('total_harga', 12, 2);
             $table->string('kode_ambil')->unique();
-            $table->enum('status_pembayaran', ['pending', 'paid'])->default('pending');
+            $table->enum('status_pembayaran', ['pending', 'paid', 'unpaid'])->default('pending');
             $table->timestamps();
         });
     }

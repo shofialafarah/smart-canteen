@@ -109,13 +109,6 @@
                             </label>
                         </div>
                     </div>
-                    <div
-                        class="flex justify-between items-center mb-8 bg-black/20 p-6 rounded-2xl border border-white/5">
-                        <span class="text-gray-400 font-medium">Total Bayar:</span>
-                        <span class="text-3xl font-black text-orange-500 italic">
-                            Rp {{ number_format($total, 0, ',', '.') }}
-                        </span>
-                    </div>
 
                     <form id="checkout-form" action="{{ route('order.store') }}" method="POST">
                         @csrf
@@ -141,8 +134,23 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         function confirmPayment() {
-            // Ambil nilai metode yang dipilih
-            const selectedMethod = document.querySelector('input[name="metode_pembayaran"]:checked').value;
+            // Cari radio yang dipilih
+            const selectedRadio = document.querySelector('input[name="metode_pembayaran"]:checked');
+
+            if (!selectedRadio) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops!',
+                    text: 'Pilih metode pembayaran dulu ya.',
+                    background: '#1e1e1e',
+                    color: '#fff'
+                });
+                return;
+            }
+
+            const selectedMethod = selectedRadio.value;
+
+            // Set nilai ke input hidden di dalam form sebelum submit
             document.getElementById('metode_pembayaran_input').value = selectedMethod;
 
             let textMessage = selectedMethod === 'cashless' ?
@@ -162,6 +170,7 @@
                 color: '#fff'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    // Pastikan ID form benar-benar 'checkout-form'
                     document.getElementById('checkout-form').submit();
                 }
             });
@@ -242,7 +251,7 @@
             Swal.fire({
                 icon: 'error',
                 title: 'Waduh!',
-                text: "{!! addslashes(session('error')) !!}",
+                text: @json(session('error')),
                 background: '#1e1e1e',
                 color: '#fff',
                 confirmButtonColor: '#f97316'
@@ -255,7 +264,7 @@
             Swal.fire({
                 icon: 'success',
                 title: 'Berhasil!',
-                text: "{!! addslashes(session('success')) !!}",
+                text: @json(session('error')),
                 background: '#1e1e1e',
                 color: '#fff',
                 showConfirmButton: false,

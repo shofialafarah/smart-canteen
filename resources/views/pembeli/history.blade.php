@@ -60,19 +60,20 @@
                                 @endif
                             </div>
 
-                            {{-- Harga --}}
                             <div class="text-center md:text-left">
                                 <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Total & Status Bayar
                                 </p>
                                 <p class="text-xl font-black text-orange-500">Rp
                                     {{ number_format($order->total_harga, 0, ',', '.') }}</p>
 
-                                @if ($order->metode_pembayaran == 'cashless')
-                                    <p class="text-[10px] font-bold text-green-500">● LUNAS (SALDO)</p>
-                                @elseif($order->status_pembayaran == 'paid')
-                                    <p class="text-[10px] font-bold text-green-500">● LUNAS (CASH)</p>
+                                {{-- Cek apakah status_pembayaran mengandung kata 'paid' atau pesanan sudah 'selesai' --}}
+                                @if ($order->status_pembayaran == 'paid' || $order->status_pesanan == 'selesai')
+                                    <p class="text-[10px] font-bold text-green-500">
+                                        ● LUNAS ({{ $order->metode_pembayaran == 'cashless' ? 'SALDO' : 'CASH' }})
+                                    </p>
                                 @else
-                                    <p class="text-[10px] font-bold text-red-500 animate-pulse">● BELUM BAYAR (TUNAI)
+                                    <p class="text-[10px] font-bold text-red-500 animate-pulse">
+                                        ● BELUM BAYAR (TUNAI)
                                     </p>
                                 @endif
                             </div>

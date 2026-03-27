@@ -15,10 +15,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Buat kategori default agar ID 1 tersedia
-        \App\Models\Category::create([
-            'nama_kategori' => 'Makanan & Minuman'
-        ]);
+        // Buat kategori
+        \App\Models\Category::create(['nama_kategori' => 'Makanan']);
+        \App\Models\Category::create(['nama_kategori' => 'Minuman']);
+        \App\Models\Category::create(['nama_kategori' => 'Snack']);
 
         $this->call([
             UserSeeder::class,

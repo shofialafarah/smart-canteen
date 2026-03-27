@@ -36,6 +36,9 @@
                                     Nama Menu</th>
                                 <th
                                     class="px-6 py-4 text-left font-display text-orange-500 uppercase tracking-wider text-sm">
+                                    Kategori</th>
+                                <th
+                                    class="px-6 py-4 text-left font-display text-orange-500 uppercase tracking-wider text-sm">
                                     Harga</th>
                                 <th
                                     class="px-6 py-4 text-left font-display text-orange-500 uppercase tracking-wider text-sm">
@@ -57,6 +60,12 @@
                                     </td>
                                     <td class="px-6 py-4 font-bold text-gray-200 uppercase tracking-tight">
                                         {{ $menu->nama_menu }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="px-3 py-1 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-500 text-xs font-bold uppercase tracking-widest">
+                                            {{ $menu->category->nama_kategori ?? 'Tanpa Kategori' }}
+                                        </span>
                                     </td>
                                     <td class="px-6 py-4 text-orange-400 font-black">
                                         <span class="text-xs">Rp</span> {{ number_format($menu->harga, 0, ',', '.') }}

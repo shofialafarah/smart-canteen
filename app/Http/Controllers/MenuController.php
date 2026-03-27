@@ -6,41 +6,102 @@ use App\Models\Menu;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class MenuController extends Controller
 {
-    // Fungsi untuk menampilkan halaman form tambah menu
+    // Form Tambah Menu
     public function create()
     {
-        return view('seller.menu.create');
+        $categories = Category::all();
+        return view('seller.menu.create', compact('categories'));
     }
 
-    // Fungsi untuk menyimpan data menu ke database
+    // Proses Simpan Menu Baru
     public function store(Request $request)
     {
         $request->validate([
             'nama_menu' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
             'harga'     => 'required|numeric',
             'stok'      => 'required|integer',
             'foto_menu' => 'required|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
-        // Simpan foto jika ada
-        $path = null;
-        if ($request->hasFile('foto_menu')) {
-            $path = $request->file('foto_menu')->store('menu-images', 'public');
-        }
+        $path = $request->file('foto_menu')->store('menus', 'public');
 
-        // Simpan ke database
         Menu::create([
-            'shop_id'   => Auth::user()->shop->id, 
-            'category_id'  => 1,
+            'shop_id'   => Auth::user()->shop->id,
+            'category_id' => $request->category_id,
             'nama_menu' => $request->nama_menu,
             'harga'     => $request->harga,
             'stok'      => $request->stok,
             'foto_menu' => $path,
         ]);
 
-        return redirect()->route('seller.dashboard')->with('success', 'Men berhasil ditambahkan!');
+        return redirect()->route('seller.dashboard')->with('success', 'Menu berhasil ditambahkan!');
+    }
+
+    // Form Edit Menu
+    public function edit($id)
+    {
+        $menu = Menu::findOrFail($id);
+        $categories = Category::all();
+
+        // Proteksi: Pastikan menu milik warung user yang login
+        if ($menu->shop_id !== Auth::user()->shop->id) {
+            abort(403, 'Akses ditolak.');
+        }
+
+        return view('seller.menu.edit', compact('menu', 'categories'));
+    }
+
+    // Proses Update Menu
+    public function update(Request $request, $id)
+    {
+        $menu = Menu::findOrFail($id);
+
+        if ($menu->shop_id !== Auth::user()->shop->id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'nama_menu' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'harga' => 'required|numeric',
+            'stok' => 'required|integer',
+            'foto_menu' => 'nullable|image|max:2048',
+        ]);
+
+        $data = $request->only(['nama_menu', 'category_id', 'harga', 'stok']);
+
+        if ($request->hasFile('foto_menu')) {
+            if ($menu->foto_menu) {
+                Storage::disk('public')->delete($menu->foto_menu);
+            }
+            $data['foto_menu'] = $request->file('foto_menu')->store('menus', 'public');
+        }
+
+        $menu->update($data);
+
+        return redirect()->route('seller.dashboard')->with('success', 'Menu berhasil diperbarui!');
+    }
+
+    // Proses Hapus Menu
+    public function destroy($id)
+    {
+        $menu = Menu::findOrFail($id);
+
+        if ($menu->shop_id !== Auth::user()->shop->id) {
+            abort(403);
+        }
+
+        if ($menu->foto_menu) {
+            Storage::disk('public')->delete($menu->foto_menu);
+        }
+
+        $menu->delete();
+
+        return back()->with('success', 'Menu telah dihapus.');
     }
 }
