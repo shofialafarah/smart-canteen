@@ -8,7 +8,13 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\TopUpController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/debug-migrate', function () {
+    Artisan::call('migrate', ['--force' => true]);
+    return "Migration Berhasil!";
+});
 
 Route::get('/', function () {
     return view('welcome');
