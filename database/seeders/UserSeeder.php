@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Shop;
@@ -15,19 +14,19 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Admin (Login pakai Email)
+        // 1. Admin
         User::create([
-            'name' => 'Admin Sekolah',
-            'email' => 'shofia.lafarah74@gmail.com',
-            'password' => Hash::make('smart-canteen.shofialafarah'),
+            'name' => env('ADMIN_NAME', 'Default Admin'),
+            'email' => env('ADMIN_EMAIL'),
+            'password' => Hash::make(env('ADMIN_PASSWORD')),
             'role' => 'admin',
         ]);
 
-        // 2. Penjual (Login pakai Email)
+        // 2. Penjual
         $penjual = User::create([
-            'name' => 'Ibu Kantin',
-            'email' => 'penjual@gmail.com',
-            'password' => Hash::make('123123123'),
+            'name' => env('PENJUAL_NAME', 'Penjual'),
+            'email' => env('PENJUAL_EMAIL'),
+            'password' => Hash::make(env('PENJUAL_PASSWORD')),
             'role' => 'penjual',
         ]);
 
@@ -37,22 +36,21 @@ class UserSeeder extends Seeder
             'deskripsi' => 'Menyediakan makanan sehat dan bergizi',
         ]);
 
-        // 3. Siswa (LOGIN PAKAI NISN)
+        // 3. Siswa
         User::create([
-            'name' => 'Siswa Teladan',
-            'nisn' => '12345678', // NISN diisi
-            'email' => null,      // Email dikosongkan (Siswa gak perlu email)
-            'password' => Hash::make('123123123'), // Password SAMA dengan NISN
+            'name' => env('SISWA_NAME'),
+            'nisn' => env('SISWA_NISN'),
+            'email' => null,
+            'password' => Hash::make(env('SISWA_PASSWORD')),
             'role' => 'pembeli',
             'balance' => 50000,
         ]);
 
-        // 4. Guru (LOGIN PAKAI EMAIL)
+        // 4. Guru
         User::create([
-            'name' => 'Pak Guru Budi',
-            'nisn' => null,       // Guru gak punya NISN
-            'email' => 'budi@guru.com',
-            'password' => Hash::make('123123123'),
+            'name' => env('GURU_NAME'),
+            'email' => env('GURU_EMAIL'),
+            'password' => Hash::make(env('GURU_PASSWORD')),
             'role' => 'pembeli',
             'balance' => 100000,
         ]);

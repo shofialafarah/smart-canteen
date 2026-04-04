@@ -21,7 +21,7 @@
                     <div class="flex flex-col items-center mb-8 bg-black/20 p-6 rounded-3xl border border-white/5">
                         <div class="relative group">
                             @if ($user->foto_profil)
-                                <img src="{{ asset('storage/' . $user->foto_profil) }}" id="preview-photo"
+                                <img src="{{ Storage::disk('supabase')->url($user->foto_profil) }}" id="preview-photo"
                                     class="w-32 h-32 rounded-3xl object-cover border-2 border-orange-500 shadow-xl shadow-orange-900/20">
                             @else
                                 <div id="placeholder-photo"
@@ -108,7 +108,7 @@
                             <label class="text-xs text-gray-500 ml-1 uppercase font-bold tracking-wider">Foto
                                 Warung</label>
                             @if (auth()->user()->shop && auth()->user()->shop->foto_warung)
-                                <img src="{{ asset('storage/' . auth()->user()->shop->foto_warung) }}"
+                                <img src="{{ Storage::disk('supabase')->url(auth()->user()->shop->foto_warung) }}"
                                     class="w-20 h-20 object-cover rounded-xl mb-3 border border-orange-500/50">
                             @endif
                             <input name="foto_warung" type="file"

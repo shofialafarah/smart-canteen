@@ -67,7 +67,7 @@
                             class="font-display text-orange-500 text-xs uppercase tracking-widest mb-2 block font-bold">Foto
                             Produk (Kosongkan jika tidak diganti)</label>
                         <div class="flex items-center gap-4 mb-4">
-                            <img src="{{ asset('storage/' . $menu->foto_menu) }}"
+                            <img src="{{ Storage::disk('supabase')->url($menu->foto) }}"
                                 class="w-20 h-20 rounded-xl object-cover border border-white/10">
                             <p class="text-xs text-gray-500">Foto saat ini</p>
                         </div>

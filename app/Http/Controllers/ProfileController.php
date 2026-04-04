@@ -94,12 +94,12 @@ class ProfileController extends Controller
         if ($request->hasFile('foto_profil')) {
             // Hapus foto lama
             if ($user->foto_profil) {
-                Storage::disk('public')->delete($user->foto_profil);
+                Storage::disk('supabase')->delete($user->foto_profil);
             }
 
             // Simpan dengan nama unik agar tidak bentrok
             $file = $request->file('foto_profil');
-            $path = $file->store('profile-photos', 'public');
+            $path = $file->store('profile-photos', 'supabase');
             $user->foto_profil = $path;
         }
 

@@ -18,7 +18,7 @@
                         <div
                             class="flex flex-col md:flex-row items-center justify-between border-b border-white/5 py-6 last:border-0 gap-4">
                             <div class="flex items-center space-x-4 w-full">
-                                <img src="{{ asset('storage/' . $details['photo']) }}"
+                                <img src="{{ Storage::disk('supabase')->url($details['photo']) }}"
                                     class="w-20 h-20 rounded-2xl object-cover border border-orange-500/20 shadow-lg">
                                 <div class="flex-1">
                                     <h4 class="font-bold text-lg text-white">{{ $details['name'] }}</h4>

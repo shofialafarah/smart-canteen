@@ -41,7 +41,7 @@
 
                         <div class="h-48 w-full overflow-hidden relative">
                             @if ($shop->foto_warung)
-                                <img src="{{ asset('storage/' . $shop->foto_warung) }}" alt="{{ $shop->nama_warung }}"
+                                <img src="{{ Storage::disk('supabase')->url($shop->foto_warung) }}" alt="{{ $shop->nama_warung }}"
                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                             @else
                                 <div

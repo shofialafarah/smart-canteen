@@ -34,7 +34,7 @@
                 @forelse($menus as $menu)
                     <div class="menu-card bg-[#1e1e1e] group overflow-hidden rounded-3xl border border-white/5 hover:border-orange-500/50 transition-all duration-300 shadow-xl flex flex-col">
                         <div class="relative h-48 overflow-hidden">
-                            <img src="{{ asset('storage/' . $menu->foto_menu) }}"
+                            <img src="{{ Storage::disk('supabase')->url($menu->foto_menu) }}"
                                 class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500"
                                 alt="{{ $menu->nama_menu }}">
                             <div class="absolute inset-0 bg-gradient-to-t from-[#1e1e1e] to-transparent opacity-60"></div>

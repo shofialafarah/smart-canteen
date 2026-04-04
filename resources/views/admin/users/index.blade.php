@@ -58,7 +58,7 @@
                                         <div class="flex items-center gap-4">
                                             <div class="relative shrink-0">
                                                 @if ($user->foto_profil)
-                                                    <img src="{{ asset('storage/' . $user->foto_profil) }}"
+                                                    <img src="{{ Storage::disk('supabase')->url($user->foto_profil) }}"
                                                         class="w-12 h-12 rounded-2xl object-cover border border-white/10">
                                                 @else
                                                     <div

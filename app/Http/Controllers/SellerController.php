@@ -33,7 +33,7 @@ class SellerController extends Controller
             'foto_warung' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $path = $request->file('foto_warung')->store('shops', 'public');
+        $path = $request->file('foto_warung')->store('shops', 'supabase');
 
         Shop::create([
             'user_id' => Auth::id(),
@@ -63,7 +63,7 @@ class SellerController extends Controller
             if ($shop->foto_warung) {
                 Storage::delete('public/' . $shop->foto_warung);
             }
-            $path = $request->file('foto_warung')->store('shops', 'public');
+            $path = $request->file('foto_warung')->store('shops', 'supabase');
             $shop->foto_warung = $path;
         }
 

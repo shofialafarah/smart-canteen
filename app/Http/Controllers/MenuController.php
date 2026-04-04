@@ -29,7 +29,7 @@ class MenuController extends Controller
             'foto_menu' => 'required|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
-        $path = $request->file('foto_menu')->store('menus', 'public');
+        $path = $request->file('foto_menu')->store('menus', 'supabase');
 
         Menu::create([
             'shop_id'   => Auth::user()->shop->id,
@@ -77,9 +77,9 @@ class MenuController extends Controller
 
         if ($request->hasFile('foto_menu')) {
             if ($menu->foto_menu) {
-                Storage::disk('public')->delete($menu->foto_menu);
+                Storage::disk('supabase')->delete($menu->foto_menu);
             }
-            $data['foto_menu'] = $request->file('foto_menu')->store('menus', 'public');
+            $data['foto_menu'] = $request->file('foto_menu')->store('menus', 'supabase');
         }
 
         $menu->update($data);
@@ -97,7 +97,7 @@ class MenuController extends Controller
         }
 
         if ($menu->foto_menu) {
-            Storage::disk('public')->delete($menu->foto_menu);
+            Storage::disk('supabase')->delete($menu->foto_menu);
         }
 
         $menu->delete();
