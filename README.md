@@ -1,15 +1,9 @@
-# Smart-Canteen
+# Smart Canteen App
 
-<p align="center">
-    
-    
-    
-    
-</p>
-## 🌟 Tentang Projek
-**Smart-Canteen** adalah aplikasi berbasis web yang dirancang untuk mendigitalisasi proses pemesanan makanan di kantin. Aplikasi ini bertujuan untuk mengurangi antrean fisik, memudahkan pengelolaan stok bagi pedagang, dan memberikan transparansi transaksi bagi admin.
+## Tentang Projek
+**Smart Canteen** adalah aplikasi berbasis web yang dirancang untuk mendigitalisasi proses pemesanan makanan di kantin. Aplikasi ini bertujuan untuk mengurangi antrean fisik, memudahkan pengelolaan stok bagi pedagang, dan memberikan transparansi transaksi bagi admin.
 
-Projek ini dibangun menggunakan **Laravel 11** dengan fokus pada antarmuka yang modern (Dark Mode) dan pengalaman pengguna yang responsif.
+Projek ini dibangun menggunakan **Laravel 12** dengan fokus pada antarmuka yang modern (Dark Mode) dan pengalaman pengguna yang responsif.
 
 ## 🚀 Fitur Utama
 * **Admin Dashboard:** Kelola data pengguna, verifikasi warung, dan pantau total dana.
@@ -29,7 +23,7 @@ Jika ingin menjalankan projek ini secara lokal:
 
 1. **Clone repository:**
    ```bash
-   git clone (https://github.com/shofialafarah/smart-canteen.git)
+   git clone https://github.com/shofialafarah/smart-canteen.git
 2. **Instal dependency PHP:**
    ```bash
    composer install
@@ -44,6 +38,7 @@ Jika ingin menjalankan projek ini secara lokal:
    php artisan migrate --seed
 6. **Jalankan Aplikasi**
    ```bash
+   # Terminal 1:
    php artisan serve
-   # Di terminal lain jalankan:
+   # Terminal 2:
    npm run dev
