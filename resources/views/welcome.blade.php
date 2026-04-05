@@ -61,7 +61,7 @@
                 genggamanmu.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
-                <a href="{{ route('register') }}"
+                <a href="{{ route('login') }}"
                     class="px-8 py-3 bg-orange-600 hover:bg-orange-500 text-white rounded-xl font-bold text-lg shadow-xl shadow-orange-900/40 transition-all transform hover:-translate-y-1 active:scale-95">
                     Mulai Pesan Sekarang
                 </a>
